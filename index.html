@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STR Tax Strategy Calculator — Wireframe</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --brand: #0088cc;
+    --brand-dark: #0a2540;
+    --brand-darker: #061a2e;
+    --brand-light: #f0f8fc;
+    --accent-tint: rgba(0, 136, 204, 0.08);
+    --ink: #1a1a1a;
+    --ink-soft: #5a5a5a;
+    --gray-text: #5a6573;
+    --gray-soft: #8a93a0;
+    --border: #e6ebf1;
+    --bg: #fafafa;
+    --pass: #2a7d44;
+    --pass-bg: #e3f5e8;
+    --fail: #a04545;
+    --fail-bg: #fbe8e8;
+    --warn: #c89a3a;
+    --warn-bg: #fdf6e3;
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'Inter', -apple-system, sans-serif;
+  }
+
+  html, body {
+    font-family: var(--body);
+    background: var(--brand-darker);
+    color: var(--ink);
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* WIREFRAME RIBBON */
+  .wireframe-ribbon {
+    background: #1a2332;
+    color: #ffffff;
+    text-align: center;
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .wireframe-ribbon strong { color: #ffd479; }
+
+  /* APP HEADER */
+  .header {
+    background: var(--brand-darker);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 40%;
+    height: 200%;
+    background: radial-gradient(circle at center, var(--brand) 0%, transparent 60%);
+    opacity: 0.10;
+    filter: blur(30px);
+    pointer-events: none;
+  }
+  .logo-mark { display: block; position: relative; z-index: 1; flex-shrink: 0; text-decoration: none; }
+  .logo-mark-img { display: block; }
+  .header-title {
+    margin-left: auto;
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 600;
+    font-style: italic;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 1;
+  }
+  .header-step {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.4px;
+    position: relative;
+    z-index: 1;
+    margin-left: 16px;
+  }
+
+  /* PROGRESS BAR */
+  .progress {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    background: var(--brand);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 8px rgba(0, 136, 204, 0.4);
+  }
+
+  /* MAIN CONTENT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 22px 32px 28px;
+  }
+
+  /* SCREEN BASE */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadein 0.2s ease; }
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* QUESTION CARD */
+  .qcard {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+  }
+  .q-eyebrow {
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--brand);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    margin-bottom: 10px;
+  }
+  .q-title {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.2;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.015em;
+  }
+  .q-title em {
+    font-style: italic;
+    color: var(--brand);
+    font-weight: 400;
+  }
+  .q-help {
+    font-family: var(--body);
+    font-size: 13.5px;
+    color: var(--gray-text);
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 7px; }
+  .option {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 11px 14px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: var(--ink);
+    transition: all 0.12s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .option:hover {
+    border-color: var(--brand);
+    background: var(--brand-light);
+  }
+  .option.selected {
+    border-color: var(--brand);
+    background: var(--brand-light);
+    font-weight: 600;
+  }
+  .option-radio {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #c5cdd6;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .option.selected .option-radio {
+    border-color: var(--brand);
+  }
+  .option.selected .option-radio::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 8px; height: 8px;
+    background: var(--brand);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .option-detail {
+    font-size: 12px;
+    color: var(--gray-soft);
+    margin-left: auto;
+    font-weight: 400;
+  }
+
+  /* TEXT INPUT */
+  .input-group { margin-top: 4px; }
+  .input-prefix-wrap {
+    display: flex;
+    align-items: stretch;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+  }
+  .input-prefix-wrap:focus-within { border-color: var(--brand); }
+  .input-prefix {
+    background: var(--brand-light);
+    color: var(--brand);
+    font-weight: 700;
+    padding: 14px 16px;
+    font-size: 18px;
+    border-right: 1.5px solid var(--border);
+  }
+  input[type="text"], input[type="number"] {
+    border: none;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 18px;
+    color: var(--ink);
+    flex: 1;
+    width: 100%;
+    outline: none;
+    background: transparent;
+  }
+  .input-hint {
+    font-size: 12px;
+    color: var(--gray-soft);
+    margin-top: 8px;
+  }
+
+  /* NAV BUTTONS */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    gap: 10px;
+  }
+  .btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 5px;
+    padding: 11px 22px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s ease;
+  }
+  .btn-primary {
+    background: var(--brand);
+    color: #ffffff;
+    border-color: var(--brand);
+  }
+  .btn-primary:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+  .btn-primary:disabled {
+    background: #c5cdd6; border-color: #c5cdd6; cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--gray-text);
+    border-color: var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--gray-text); color: var(--ink); }
+  .btn-ghost {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.55);
+    border: none;
+    padding: 11px 0;
+  }
+  .btn-ghost:hover { color: rgba(255, 255, 255, 0.9); }
+
+  /* WELCOME / HERO SCREEN — matches reference deck dark navy aesthetic */
+  .welcome {
+    background: var(--brand-darker);
+    color: #ffffff;
+    margin: -22px -24px 0;
+    padding: 42px 24px 48px;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+  }
+  .welcome::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle at center, var(--brand) 0%, transparent 60%);
+    opacity: 0.18;
+    filter: blur(40px);
+    pointer-events: none;
+  }
+  .welcome::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle at center, var(--brand) 0%, transparent 60%);
+    opacity: 0.12;
+    filter: blur(60px);
+    pointer-events: none;
+  }
+  .welcome-inner {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    z-index: 1;
+  }
+  .welcome-eyebrow {
+    font-family: var(--body);
+    font-size: 11px;
+    color: var(--brand);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    margin-bottom: 16px;
+  }
+  .welcome h1 {
+    font-family: var(--display);
+    font-size: clamp(34px, 5.6vw, 50px);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px 0;
+    color: #ffffff;
+  }
+  .welcome h1 em {
+    font-style: italic;
+    color: var(--brand);
+    font-weight: 400;
+  }
+  .welcome-lede {
+    font-family: var(--body);
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.5;
+    margin: 0 0 24px 0;
+    max-width: 800px;
+    font-weight: 400;
+  }
+  .welcome-meta {
+    display: flex;
+    gap: 0;
+    margin-bottom: 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 12px 0;
+  }
+  .welcome-meta-item {
+    flex: 1;
+    padding: 0 14px;
+    border-right: 1px solid rgba(255, 255, 255, 0.10);
+  }
+  .welcome-meta-item:first-child { padding-left: 0; }
+  .welcome-meta-item:last-child { border-right: none; padding-right: 0; }
+  .welcome-meta-label {
+    font-family: var(--body);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .welcome-meta-value {
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.1;
+  }
+  .welcome-meta-sub {
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 2px;
+  }
+  .welcome .btn-primary {
+    background: var(--brand);
+    color: #ffffff;
+    border: none;
+    font-family: var(--body);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 12px 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .welcome .btn-primary:hover { background: #0099e0; }
+
+  /* RECAP SCREEN */
+  .recap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .recap-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .recap-item:last-child { border-bottom: none; }
+  .recap-label { color: var(--gray-text); }
+  .recap-value {
+    color: var(--ink);
+    font-weight: 600;
+    text-align: right;
+  }
+  .recap-edit {
+    background: none;
+    border: none;
+    color: var(--brand);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 12px;
+    text-decoration: underline;
+  }
+
+  /* RESULTS SCREEN */
+  .results-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+  }
+  .results-property-ref { margin-bottom: 18px; padding: 14px 22px 14px; border-bottom: 1px solid var(--border, #d4d4d4); }
+  .results-property-eyebrow { font-family: var(--body); font-size: 10px; font-weight: 600; color: var(--brand, #0088cc); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 4px; }
+  .results-property-value { font-family: var(--display); font-size: 18px; font-weight: 500; color: var(--ink, #1a1a1a); line-height: 1.2; }
+
+  .results-banner {
+    padding: 12px 22px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    text-align: center;
+  }
+  .banner-pass { background: var(--pass-bg); color: var(--pass); }
+  .banner-borderline { background: var(--warn-bg); color: var(--warn); }
+  .banner-fail { background: var(--fail-bg); color: var(--fail); }
+
+  .results-headline {
+    padding: 22px 22px 18px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .headline-eyebrow {
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--gray-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .headline-amount {
+    font-family: var(--display);
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--brand-dark);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 4px 0;
+  }
+  .headline-sub {
+    font-family: var(--body);
+    font-size: 12.5px;
+    color: var(--gray-text);
+    margin-top: 8px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.45;
+  }
+
+  /* DOWN PAYMENT RECOVERY VIZ */
+  .recovery-block {
+    padding: 18px 22px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .recovery-eyebrow {
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--brand);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    margin-bottom: 6px;
+  }
+  .recovery-title {
+    font-family: var(--display);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0 0 14px 0;
+    letter-spacing: -0.01em;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .bar-label {
+    font-size: 11.5px;
+    color: var(--gray-text);
+    width: 105px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  .bar-track {
+    flex: 1;
+    height: 24px;
+    background: #f0f3f7;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: var(--brand);
+    border-radius: 4px;
+  }
+  .bar-fill-recovery {
+    background: linear-gradient(90deg, #2a7d44, #4eaa6a);
+  }
+  .bar-amount {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .bar-amount.outside {
+    left: auto;
+    right: -100px;
+    color: var(--ink);
+    width: 95px;
+    text-align: left;
+  }
+  .recovery-callout {
+    margin-top: 12px;
+    padding: 11px 14px;
+    background: var(--brand-light);
+    border-radius: 5px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .recovery-callout strong {
+    color: var(--brand);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* STRATEGY BREAKDOWN */
+  .strategy-block { padding: 18px 22px 18px; }
+  .strategy-eyebrow {
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--brand);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    margin-bottom: 14px;
+  }
+  .strategy-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+  .strategy-row:last-child { border-bottom: none; }
+  .strategy-label-block { flex: 1; }
+  .strategy-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .strategy-note {
+    font-size: 11.5px;
+    color: var(--gray-text);
+    line-height: 1.4;
+  }
+  .strategy-status {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+  .status-applies { background: var(--pass-bg); color: var(--pass); }
+  .status-warn { background: var(--warn-bg); color: var(--warn); }
+  .status-na { background: #f0f3f7; color: var(--gray-soft); }
+
+  /* RESULTS CTA */
+  .results-cta {
+    margin-top: 14px;
+    background: var(--brand-darker);
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .results-cta::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(circle at center, var(--brand) 0%, transparent 60%);
+    opacity: 0.15;
+    filter: blur(40px);
+    pointer-events: none;
+  }
+  .cta-eyebrow {
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--brand);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    margin-bottom: 6px;
+    position: relative;
+  }
+  .cta-title {
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 500;
+    margin: 0 0 6px 0;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    position: relative;
+  }
+  .cta-title em {
+    font-style: italic;
+    color: var(--brand);
+    font-weight: 400;
+  }
+  .cta-body {
+    font-family: var(--body);
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.5;
+    margin: 0 0 14px 0;
+    position: relative;
+  }
+  .cta-actions { display: flex; gap: 8px; flex-wrap: wrap; position: relative; }
+  .cta-btn {
+    background: var(--brand);
+    color: #ffffff;
+    padding: 9px 14px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .cta-btn-secondary {
+    background: transparent;
+    border: 1px solid #4a5566;
+    color: #ffffff;
+  }
+
+  /* STATE CONFORMITY CALLOUT */
+  .state-conformity-callout {
+    margin: 0 24px 18px;
+    padding: 14px 18px;
+    background: var(--brand-light);
+    border-left: 3px solid var(--brand);
+    border-radius: 4px;
+  }
+  .state-conformity-eyebrow {
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: var(--brand);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    margin-bottom: 6px;
+  }
+  .state-conformity-body {
+    font-family: var(--body);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .state-conformity-body em {
+    font-family: var(--display);
+    font-style: italic;
+    color: var(--brand-dark);
+    font-weight: 500;
+  }
+
+  /* ASSUMPTIONS PANEL */
+  .assumptions {
+    margin-top: 10px;
+    padding: 12px 14px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 11.5px;
+    color: var(--gray-text);
+    line-height: 1.5;
+  }
+  .assumptions strong { color: var(--ink); }
+  .assumptions-toggle {
+    background: none;
+    border: none;
+    color: var(--brand);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  .assumptions-content { margin-top: 8px; display: none; }
+  .assumptions-content.open { display: block; }
+
+  /* RESULTS FINEPRINT (replaces footer disclaimer) */
+  .results-fineprint {
+    margin-top: 14px;
+    font-family: var(--body);
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* WIREFRAME ANNOTATIONS — hidden in preview */
+  .wf-note { display: none; }
+  .wireframe-ribbon { display: none; }
+  .wf-note-original {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: #fffbe6;
+    border-left: 3px solid #ffd479;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 10.5px;
+    color: #6b5a1c;
+    line-height: 1.45;
+  }
+  .wf-note::before {
+    content: '⚙ ';
+    font-weight: bold;
+  }
+  /* EMAIL MODAL */
+  .email-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  .email-modal-overlay.active { display: flex; }
+  .email-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 420px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .email-modal h3 {
+    font-family: var(--display);
+    font-size: 20px;
+    margin: 0 0 8px;
+    color: var(--brand-dark);
+  }
+  .email-modal p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+  }
+  .email-modal input[type="email"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: var(--body);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .email-modal input[type="email"]:focus {
+    border-color: var(--brand);
+  }
+  .email-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .email-modal-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+  }
+  .email-modal-actions button:hover { opacity: 0.85; }
+  .email-modal-actions .modal-submit {
+    background: var(--brand);
+    color: #fff;
+  }
+  .email-modal-actions .modal-cancel {
+    background: var(--bg);
+    color: var(--ink-soft);
+    border: 1px solid var(--border);
+  }
+  .email-modal .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    line-height: 1;
+  }
+  .email-modal .modal-state { display: none; }
+  .email-modal .modal-state.active { display: block; }
+  .email-modal .modal-loading { text-align: center; padding: 20px 0; color: var(--ink-soft); }
+  .email-modal .modal-success { text-align: center; padding: 20px 0; }
+  .email-modal .modal-success .checkmark { font-size: 40px; margin-bottom: 10px; }
+  .email-modal .modal-error { text-align: center; padding: 20px 0; color: var(--fail); }
+  .email-modal { max-height: 90vh; overflow-y: auto; }
+  .modal-interests { margin: 16px 0 4px; text-align: left; }
+  .modal-interests-label { font-family: var(--body); font-size: 12px; font-weight: 600; color: var(--ink, #1a1a1a); margin-bottom: 8px; }
+  .modal-checkbox { display: flex; align-items: flex-start; gap: 8px; font-family: var(--body); font-size: 12.5px; color: var(--ink-soft, #5a5a5a); margin-bottom: 7px; cursor: pointer; line-height: 1.4; }
+  .modal-checkbox input[type="checkbox"] { margin: 2px 0 0 0; flex-shrink: 0; accent-color: var(--brand, #0088cc); cursor: pointer; }
+  .modal-consent-text { font-family: var(--body); font-size: 10.5px; color: var(--ink-faint, #8a8a8a); line-height: 1.5; margin-top: 14px; font-style: italic; text-align: left; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- WIREFRAME RIBBON -->
+<div class="wireframe-ribbon">
+  <strong>WIREFRAME</strong> · STR Calculator · for question flow + results review · not final visual design
+</div>
+
+<!-- APP HEADER -->
+<div class="header">
+  <a href="https://aiolacpa.com" target="_blank" rel="noopener noreferrer" class="logo-mark-img"></a><img src="data:image/png;base64,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AABllEqlJBaL2R4DiUTCfi+fz4uq2q/Dr4Fyc13Xvi4UCvb4M8dlPB6ndwsANAgSAwAAVEg6nbYJA8/zIq+BcvJ9X1KplE0OJJNJKRQKIiLS1NRUyaIBACqAxAAAABXg+76dfyAIgkhvAYYaoNzCPVfM18XvAQAaBy0PAAAqIAgCeyNWKBSkublZREQ6OjqkpaWlkkVDA4jFYpLP5yWTyYiqSiwWs/MKmJ4rAIDGQWIAAIAKSKVSoqry4YcfyqxZsySTydhx3uZmDSinXC4nJ554omy00UY2IeB5nsTjcZIDANBgSAwAAFAhqiqLFi2S888/n7swVMQ+++yjG2+8sfi+L4lEQlSVXgMA0ICYYwAAgApwXVfi8bgdQgBUgumZ4jiOiHT2ZGGuAQBoPCQGAACoADPBYDabrXBJ0Mjy+byISCRBxaoYANB4SAwAAFABsVhMVJUeA6io5ubmyHwWQRCwKgYANCASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANDASAwAAAAAANLC6SQy0t7dLLBYTx3EkCAL7vu/7Eo/XzWYC6IbneeL7vsRiMfE8z75vzn/XdStYup7F43Fb3nw+L7FYTETEljeVSlWsbNUomUyK7/siIpE4LyKR/V5tVNWWu1AoiIjYr0WEaxQqKh6PSywWs8emqoqISCwWkyAIJJFIVLJ4PVJV8TxPYrGYLTPn1dCq1rgbBEHkWFBVCYLAHuccG+irWm1/9FUy/MXxxx+vG264oaiqxOPxmripTqfTMmXKFBk+fLiIiCQSCXsRcxxH0um0/Od//mcliwigjDbaaCNNpVK2YWhilvlaROS4446TfffdVwuFgg3uyWSyS3AfahtssIEkk51h2HwO+8pXvjLURapqX/nKV2zyxDA33clkUnbbbTc555xzNJ1Oi+M4Fb+hMTcsu+22my2LKX/48+c+97mKlRH48pe/LCKd7SmRznaUqkosFpN4PC677767nHvuuaqqkk6nJZ/PSzqdjtx4VcKUKVNsPDfnl4mjvu/LF77whUoWr+6pqkyfPl2+/vWvaxAE4jiOjBgxwiaYyi0IAslkMtLR0SGZTEZc15WmpibxfV823HBDe0wEQRC5l8lkMrLVVlsNSRlRP2qt/dEb3/elqalJFi9eLHPnzrUbFtnCefPm6S677NL5jVAGtppls1nJZDL2YmAuZiJiLxa5XE5aWlpia/s7AGrT5MmT9emnnxaR6JOucGPR8zxJJpOSy+WkubnZNhQqHePMBUVkTewyTzYSiYQ8/PDDstdeexG7/s3zPDU3K8WNPcN1XQkniiotvI9F1jy5EhF7fH766afyn//5n+xnVEShUFCTFDCKzy/XdSUej0cau5U+x8y5ZWK953mSSCRsz7GVK1fK+uuvz3k1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j7355psi0jm5lYhEnsiIrBk+YOTzedliiy2GuKTozumnny4i0mUyMrPvcrmcxONx8TzPLk86f/58ef/99/scU37/+9/boTUmhoUnqhSJLrGaSCTkoIMOGsDW1Y8NN9zQnkPJZLLkGffvuusuuvFB9ttvvy5DEIuTA8VtiXg8Lu+++25Zy0X8ATpNnTpVR4wY0effM+0voFxofwyeQU8MHH744ZH1fUXWXNCSyaSoqjiOYyd8i8fjcuGFF/brf1133XUxx3HEcRwZNmyYiHQ2GDzPszPMp9Npu+5wKpWSeDwup5xySl13vRs5cmTJM8YmEgnxPE/a2trkjTfeqNsT5N133400Mk0mu/hpjDFUS2ChdwcccIBdDszsNzMJmMiaZE8ymbT7cNasWf36X3PmzIl1dHRIPB4vaW103/elublZTj311LqOKaXYfPPNbXwXkZISk8uXLy93sVAjfvazn4nImqStWbLQ933bFdkcU+GG31NPPVXWchF/gE5nnHGGPe5LGUpgzuUlS5aUtVwA7Y/BM6iJgaOPPlrXXXddyWQy9uZfROzNuUi014Dv++J5nsydO7ffN6T33ntv5Iavu0lRwrPzp1IpmT59en//XU0YPXq0BEFQ8gQxyWSy7N0xK+2ll16KXMjCS2KFhRMFzc3Nsv3229PgqqCDDz5YN9hgA3ssFw8DCe+/8E3EFVdc0e+Y8ve//108z7NLeK6NeWo3Y8aM/v67ujFy5EiJxWL2iWcp8eeVV14ZgpKh2u200066zTbbSDabtU99TAMv/KTedd0uDb+HHnqobOUi/gCd9txzT919993tsNxSumqbc/mee+4pd/HQ4Gh/DJ7BTgzY18WTu4XHxpkLehAEct999w3of/7pT3+STCZjly5MJpP2abn5f5lMxk4oF4/HZbvttpMtt9yybm/4tthiC9tg6I2po7feeqvcxaqohQsXdjtJVPFsucXJgi996UtDUj507+STTxbP8ySVStlJREUksuyk4ziRpM/DDz88oP95+eWXRxKYpdh6661l1KhRdRtTSrHVVlvZ16WuI/zGG2+Us0ioEbfffrs0NzdLS0uLFAoF8X3fNvASiYS9SQ4P+QqCQFavXi1vv/122Xq6EX+ATpdccomIdJ53pXbTVlVpbW2V119/vW57o6I60P4YPIOaGNh5553tzijuyh6Px22XfpE1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/qBcis/R4naB53ldjrfHH3+cfSWlxbdwffq+r/PmzWuIups3b16f2piqWvdtTNofg6fPQwm+853viEj3aw93x2RCTXbbcRwpFAoSi8VsN+6BfJgMfyaTseUSWbMETCn037M1x+NxSaVSNT8u75lnnunX7339618f5JJUh0033VTXWWcd26XVHCPmaU64y1F4zd8XX3xxiEvamKZOnSoia54+mglLE4mE7d7b0tJin9x1dHRIPp+PxJ/wOSwSfWo5kA8To7LZrIiIjV0ipS9n1tzcLEcdddRgVllV+uSTT/rUQ0uks2722GMPLs5lEp5JPBaLyYgRIypcoupD/EGlmOW9RdZMGl1KuxpAFO2PwdOnxMB3v/tdNZMI9WUIQCwWk0KhICKd3dYzmYydeGig67SGZ041QxP6styL+Tvm5tDzPDnxxBP7Ui1V58knn4yV2mgILye10047lbNYFbPHHntIoVCwEwyaYzG8pq9hLsqqKosXLx7ysjaa7373u2q6TIbXVzavzbAjEbHrrg8bNkyampokmUzaYSDhRGWhULCzKw80vphyrbvuupLP5yWTydjylRoDfd+XE044YVDrrRotWbIkMqa9VJMmTSpjqRpbKpWKrEs+WMug1QviDyopPEGaOQ7N/AIASkf7Y/D0KTFw8skni6raG6y+jJ8zT/R7e68/TMY1PF6y1FmXzdIWsVhM8vm8JJNJ2XDDDWWnnXaq6SzSe++91+U9swRfmGkAxeNxmTJlypCUbajtv//+9ljzPM/ONm3W9DWTcImsWaEiFovJ3XffXcliN4TTTjtNWltbRaQzHpjz0eyjsO7OadM4jsfjNrk3WHHFMH83nI3uS6M8kUjIBhtsIJMmTarpmNKbBx54IGbm5jBPXXtTKBTqKu789re/7bErYxAEXYYt+b6vv/71r8t2XBT3jir3agS1hviDSjJzcBmqOiRzCwD1hvbH4LU/Sk4MTJgwQTfccEPbwDBPXWudeRrg+740NTVJoVAQVZXvfe97FS7ZwJjhBI7j2Ky0mYjK87wuM9HG43EZNmyYfPOb36y7xkP4xDfrA4ef8JgnOyZJoqrS1tYmzz33HJPxlNF2222nG2ywgayzzjr2vXrrRhme4fyss86qcGnK77XXXot0Xe9NJpOR3XffvcylGjp777237blmugabeFvcM81xHInH47Jw4cJK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a65nxRMC9ZSxDz/BDCueBMh8fPrpp3rBBRdUfB+V0jOpONY+88wzFS93uY0ZM6bXejGIP/2PPzNmzIgsoRXuAWC+Dit+AhbuafijH/2obuo97JFHHum2Prqbld7sjwceeKAu66KvGqHnZXhG+b6sSvDQQw/VzASLA+X7/lpXviqXhm5/XHHFFZENKu7eYLqKG2Z5v7vvvruugtcxxxyjqmuGDIRvYMOJguLZeIMg6LUefvGLX9i/G67fcEIgfFNsDryh2O6+Ov300/Uf//hHZBu6O5jN8dPTMIPwNq8twHW3vKH5mx0dHXrLLbfoRhttVFV19cwzz5S0oke9KO4Cd+mll/b5bwRBUHc3xDNnzix52805YC48lS57NTn33HP1ww8/7FJv4SVWw+sy92VG9jATj8Lnbjj5uHz5cj3vvPOqZt889thjfdouVW2Im45bbrllrWtRd4f407/487vf/c7WdfHyWd09JAgPowz/zrRp0+qq7o2HHnoosmRc+Jws3gcmnj333HN1WRd9VWp8q3XhVRRKrZunnnqqIdqY4VhRzmNtbRqy/bFq1arIjVlPGxVeGzebzeqZZ55Zd8ErvAxFeE6BcFaoeByIqupxxx231rr4xS9+EfkbxTfCJiMW/r+DvW7nYBs9erReeOGF+vHHH9syd9frJJzpMhfHtc09YBIF4SWkwgmr1atX68MPP6xHHnlk1dbPAw880O/gUGu6u6C1tbWpas9jTMNc11XHcTSfz+spp5xStfu0v3rb/vBNWzhGDOXymrViypQpOmvWrMhFOnyMFcfV7rL5xcLxprvvqarec889esghh1Td/ihlnGnxzdnf//73qtuOwbZ8+fK19lwLI/4MPP5885vf1Pfff98eb6rRpYTNfEDdLXFo9tE+++xTd3UvIrJw4cKS5xcwCYRGW7a2J402jl619Jvf+++/v9JFHTLZbLYq7ocaqf3ROIMOUTbbbrut7rfffrL77rvL6NGj5Utf+pKdH8AsxRJmliiMx+OSz+clk8l0WSpEpHPs3fLly2XRokXyyCOPyH333SfPPfccxyzQ4LbbbjvdddddZY899pBx48bJV77yFUkmk9Le3i7Dhw8Xz/NKHqsbnhlYVeW1116TBx54QJ599lm57bbbiDdACQ477DD99re/LSNGjJB11llHPvvsM0mlUjJq1CjZZJNNuswjYOa9SCaTssMOO8hQrx4EAP1R7+0PAjHKYtddd9WvfvWrsummm8r6668vG264oay33np2oiP993Icvu9LJpORQqEgH330kbz//vvywQcfyNtvvy3/+Mc/5L333uMYBdCrffbZR5ubm2XrrbeWYcOGyfjx43udpGnJkiWybNkyeeutt+SVV16RF198kXgDDKKf//zn+oMf/ECam5sll8tFlhsWETNpIecdgJpF+wMAAABYi2uuuUZV1wxTLR5m98Ybb1S8mzAAoFN9rhEDAACAipo0aVLk62QyaXsNBkEgTz/9dIVKBgAAAAAAymrChAl2Eq2eJh4+6KCD6DEAAAAAAEA9uvLKK7vMsh0eUrB8+XKSAgAAAAAA1KOtt9460ksgvFxhNptVVdU5c+aQGAAAAAAAoB7dcccdNhEQBIH6vq++76uqant7u6qq7rzzziQGAAAAAACoN9/73vdUVbW1tdUmBsLDCVRVH3roIZICAAAAAADUmy233LLL0IHwpIOFQkFVVXfaaScSAwAAAAAA1JNvfetb2tHR0WXlAdd1baLA932dO3cuSQEAAAAAAOrJ6aefbhMBZg6B8CoEqqq5XE5XrFhBUgAAAAAAgHrx1a9+VZ977jnN5XLdJgMKhYL9OggCJhwEAAAAAKAebLLJJjp37lw7qaCZR8AMJQjPK+B5njqOoz/4wQ9ICgAAAAAAUOv++Mc/aj6f10KhoL7vazabjfQU8H1fHcfRIAjUdV0NgoB5BQAAAAAAqBcPPvhgZHJBswyhSQQUDymYM2cOSQEAAAAAAOrFE088EUkImN4BqqptbW2RpMGpp55KUgAAAAAAgHryxBNP2ESA7/s2SZDP521CYPny5fq1r32NpAAAAAAAAPXmkUceiQwZCA8pCIJA77zzThICAAAAAADUq+eee84mAxzHsUsVPv/887rvvvuSFAAAAAAAoJ498cQT2traapMDzzzzjB500EEkBAAAAAAAaAR33nmnrlixQi+44AKSAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQ9f5/RBuYuBpSxPYAAAAASUVORK5CYII=" alt="Aiola CPA, PLLC" class="logo-mark" style="width: 110px; height: auto; flex-shrink: 0;">
+  <div class="header-title">STR Tax Strategy Calculator</div>
+  <div class="header-step" id="header-step"></div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress">
+  <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+
+  <!-- WELCOME -->
+  <div class="screen active" data-screen="welcome">
+    <div class="welcome">
+      <div class="welcome-inner">
+        <div class="welcome-eyebrow">STR Tax Strategy · Run on Your Numbers</div>
+        <h1>The Short-Term Rental <em>Tax Strategy</em>, run on your numbers.</h1>
+        <p class="welcome-lede">Put in your income and your real or potential STR purchase. See a path to qualifying, what your savings could look like, and how much of your down payment comes back as tax savings.</p>
+        <div class="welcome-meta">
+          <div class="welcome-meta-item">
+            <div class="welcome-meta-label">Time</div>
+            <div class="welcome-meta-value">~4 min</div>
+            <div class="welcome-meta-sub">to complete</div>
+          </div>
+          <div class="welcome-meta-item">
+            <div class="welcome-meta-label">Questions</div>
+            <div class="welcome-meta-value">12–16</div>
+            <div class="welcome-meta-sub">depending on answers</div>
+          </div>
+          <div class="welcome-meta-item">
+            <div class="welcome-meta-label">Scope</div>
+            <div class="welcome-meta-value">Federal</div>
+            <div class="welcome-meta-sub">state varies</div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="next()">Start &rarr;</button>
+      </div>
+    </div>
+    <div class="wf-note" style="margin-top: 24px;">Hero matches the reference deck aesthetic: dark navy with radial brand gradient bloom, large italic serif headline with brand accent on key words.</div>
+  </div>
+
+  <!-- Q1 - FILING STATUS -->
+  <div class="screen" data-screen="filing-status">
+    <div class="qcard">
+      <div class="q-eyebrow">Filing Status</div>
+      <h2 class="q-title">What is your filing status?</h2>
+      <div class="options" data-field="filingStatus">
+        <button class="option" data-value="single">Single</button>
+        <button class="option" data-value="mfj">Married Filing Jointly</button>
+        <button class="option" data-value="mfs">Married Filing Separately</button>
+        <button class="option" data-value="hoh">Head of Household</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 - INCOME -->
+  <div class="screen" data-screen="income">
+    <div class="qcard">
+      <div class="q-eyebrow">Income</div>
+      <h2 class="q-title">What is your household combined income?</h2>
+      <p class="q-help">W-2 wages, 1099 income, or any other taxable income.</p>
+      <div class="input-group">
+        <div class="input-prefix-wrap">
+          <div class="input-prefix">$</div>
+          <input type="text" id="income-input" inputmode="numeric" placeholder="e.g. 700,000">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 - PROPERTY ADDRESS -->
+  <div class="screen" data-screen="property-address">
+    <div class="qcard">
+      <div class="q-eyebrow">Property Address</div>
+      <h2 class="q-title">What's the property address?</h2>
+      <p class="q-help">This helps you tell multiple analyses apart in your results. Single line is fine — exact format doesn't matter.</p>
+      <div class="input-group">
+        <div class="input-prefix-wrap">
+          <input type="text" id="property-address-input" placeholder="e.g. 123 Main St, Austin TX" maxlength="200">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 - PROPERTY STATUS -->
+  <div class="screen" data-screen="property-status">
+    <div class="qcard">
+      <div class="q-eyebrow">Property Status</div>
+      <h2 class="q-title">What is the status of the property?</h2>
+      <p class="q-help">Determines which year's savings we model.</p>
+      <div class="options" data-field="propertyStatus">
+        <button class="option" data-value="own">I already own it</button>
+        <button class="option" data-value="under-contract">Under contract or closing soon</button>
+        <button class="option" data-value="planning">Planning to buy in the next 12 months</button>
+      </div>
+      <div id="property-dates" style="display: none; margin-top: 16px;">
+        <div style="margin-bottom: 12px;">
+          <label style="font-family: var(--body); font-size: 13px; color: var(--gray-text); display: block; margin-bottom: 6px;">Date contract was signed</label>
+          <div class="input-prefix-wrap">
+            <input type="date" id="contract-signed-date" style="border: none; padding: 14px 16px; font-family: inherit; font-size: 16px; color: var(--ink); flex: 1; width: 100%; outline: none; background: transparent;">
+          </div>
+        </div>
+        <div>
+          <label style="font-family: var(--body); font-size: 13px; color: var(--gray-text); display: block; margin-bottom: 6px;">Date property closed</label>
+          <div class="input-prefix-wrap">
+            <input type="date" id="closing-date" style="border: none; padding: 14px 16px; font-family: inherit; font-size: 16px; color: var(--ink); flex: 1; width: 100%; outline: none; background: transparent;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Q4 - PURCHASE PRICE -->
+  <div class="screen" data-screen="purchase-price">
+    <div class="qcard">
+      <div class="q-eyebrow">Purchase Price</div>
+      <h2 class="q-title">What is the purchase price?</h2>
+      <p class="q-help">We'll use this to model depreciable basis after factoring in the land allocation.</p>
+      <div class="input-group">
+        <div class="input-prefix-wrap">
+          <span class="input-prefix">$</span>
+          <input type="text" id="purchase-price-input" placeholder="e.g. 800,000" inputmode="numeric">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q5 - DOWN PAYMENT % -->
+  <div class="screen" data-screen="down-payment">
+    <div class="qcard">
+      <div class="q-eyebrow">Down Payment</div>
+      <h2 class="q-title">What's the down payment percentage?</h2>
+      <p class="q-help">Enter your down payment as a percentage of the purchase price.</p>
+      <div class="input-group">
+        <div class="input-prefix-wrap">
+          <input type="text" id="down-payment-input" placeholder="10" inputmode="numeric" style="text-align: right; padding-right: 8px;">
+          <span class="input-prefix" style="border-right: none; border-left: 1.5px solid var(--border); background: var(--brand-light); color: var(--brand); font-family: var(--body); font-size: 16px; font-weight: 600; padding: 14px 18px;">%</span>
+        </div>
+        <div class="input-hint" id="dp-dollar-hint" style="margin-top: 8px; font-style: italic; color: var(--gray-soft);"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PLACED IN SERVICE DATE -->
+  <div class="screen" data-screen="placed-in-service">
+    <div class="qcard">
+      <div class="q-eyebrow">Placed in Service</div>
+      <h2 class="q-title">When will the property be placed in service?</h2>
+      <p class="q-help">An estimated future date is fine if not yet listed.</p>
+      <div class="input-group">
+        <div class="input-prefix-wrap">
+          <input type="date" id="placed-in-service-input" style="border: none; padding: 14px 16px; font-family: inherit; font-size: 16px; color: var(--ink); flex: 1; width: 100%; outline: none; background: transparent;">
+        </div>
+      </div>
+
+      <div style="margin-top: 14px; padding: 12px 14px; background: var(--accent-tint); border-left: 3px solid var(--brand); border-radius: 4px;">
+        <div style="font-family: var(--body); font-size: 10px; color: var(--brand); font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px;">Bonus Depreciation Note</div>
+        <div style="font-family: var(--body); font-size: 12.5px; color: var(--ink-soft); line-height: 1.5;">
+          The One Big Beautiful Bill Act permanently restored 100% bonus depreciation for property acquired and placed in service after January 19, 2025. Earlier years follow the original phase down for properties acquired before January 19, 2025: 60% in 2024, 40% in 2025, 20% in 2026.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 - LAND ALLOCATION (NEW) -->
+  <div class="screen" data-screen="land-allocation">
+    <div class="qcard">
+      <div class="q-eyebrow">Land Allocation</div>
+      <h2 class="q-title">What is the property's land allocation?</h2>
+      <p class="q-help">Land is not depreciable. Only the building portion of your basis qualifies for cost segregation and bonus depreciation, so this number directly drives your year one savings.</p>
+
+      <div class="input-group">
+        <div class="input-prefix-wrap">
+          <input type="text" id="land-allocation-input" placeholder="20" inputmode="numeric" style="text-align: right; padding-right: 8px;">
+          <span class="input-prefix" style="border-right: none; border-left: 1.5px solid var(--border); background: var(--brand-light); color: var(--brand); font-family: var(--body); font-size: 16px; font-weight: 600; padding: 14px 18px;">% land</span>
+        </div>
+        <div class="input-hint">Leave blank to use the 20 percent national average. If you have your county assessor's allocation or an appraisal, enter it here.</div>
+      </div>
+
+      <div style="margin-top: 14px; padding: 12px 14px; background: var(--accent-tint); border-left: 3px solid var(--brand); border-radius: 4px;">
+        <div style="font-family: var(--body); font-size: 10px; color: var(--brand); font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px;">Why this matters</div>
+        <div style="font-family: var(--body); font-size: 12.5px; color: var(--ink-soft); line-height: 1.5;">
+          Properties on the water, on large land plots, near the West Coast, or in highly desirable areas tend to have higher land allocations. The wrong allocation in either direction can swing year one savings by tens of thousands of dollars. For an actual filing, verify with your advisor using the county assessor's land-to-improvement ratio, a recent appraisal, or a cost segregation engineer's allocation, whichever is most defensible for your facts and circumstances.
+        </div>
+      </div>
+    </div>
+    <div class="wf-note">New question per request. Default 20% if blank. Note about waterfront and parks requested specifically. Calculation now uses this input instead of hard-coded 80/20.</div>
+  </div>
+
+  <!-- Q8 - AVERAGE STAY -->
+  <div class="screen" data-screen="avg-stay">
+    <div class="qcard">
+      <div class="q-eyebrow">Average Stay</div>
+      <h2 class="q-title">What is or will be the average length of guest stay?</h2>
+      <div class="options" data-field="avgStay">
+        <button class="option" data-value="7-or-less">7 days or less</button>
+        <button class="option" data-value="30-or-less">30 days or less</button>
+        <button class="option" data-value="longer-than-30">Longer than 30 days</button>
+      </div>
+      <div id="substantial-services-sub" style="display: none; margin-top: 16px;">
+        <label style="font-family: var(--body); font-size: 14px; font-weight: 600; color: var(--ink); display: block; margin-bottom: 4px;">Will you be offering substantial services?</label>
+        <p style="font-family: var(--body); font-size: 13px; color: var(--gray-text); line-height: 1.5; margin: 0 0 10px 0;">Examples: cleaning during stays, concierge services, transportation, meals.</p>
+        <div class="options" data-field="avgStaySubstantialServices">
+          <button class="option" data-value="yes">Yes</button>
+          <button class="option" data-value="no">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q9 - YOUR HOURS -->
+  <div class="screen" data-screen="your-hours">
+    <div class="qcard">
+      <div class="q-eyebrow">Your Hours</div>
+      <h2 class="q-title">How many hours per year will you spend on the property?</h2>
+      <p class="q-help">Includes guest communications, cleaning coordination, maintenance, listings, bookkeeping. Also include furnishing, interior design, and initial setup. This number is a main driver of the strategy.</p>
+      <div class="options" data-field="yourHours">
+        <button class="option" data-value="under-100">Under 100 hours</button>
+        <button class="option" data-value="100-500">100 – 500 hours</button>
+        <button class="option" data-value="500-plus">500+ hours</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q9b - OTHERS' HOURS (CONDITIONAL) -->
+  <div class="screen" data-screen="others-hours">
+    <div class="qcard">
+      <div class="q-eyebrow">Others' Hours</div>
+      <h2 class="q-title">Of all other people working on the property, how much time does the next highest person spend on the property?</h2>
+      <p class="q-help">Property manager, cleaner, general contractor, co-host. Count whichever individual logs the most hours. <strong>Not the sum of everyone else's hours, just the highest individual.</strong></p>
+      <p style="font-family: var(--body); font-size: 12.5px; color: var(--ink-soft); font-style: italic; margin: 0 0 10px 0;">If you're not sure, an estimate is fine.</p>
+      <div class="options" data-field="othersMaxHours">
+        <button class="option" data-value="under-25">Under 25 hours</button>
+        <button class="option" data-value="25-100">25 – 100 hours</button>
+        <button class="option" data-value="100-250">100 – 250 hours</button>
+        <button class="option" data-value="250-500">250 – 500 hours</button>
+        <button class="option" data-value="500-plus">500+ hours</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 - PERSONAL USE -->
+  <div class="screen" data-screen="personal-use">
+    <div class="qcard">
+      <div class="q-eyebrow">Personal Use</div>
+      <h2 class="q-title">Personal use days planned in year one?</h2>
+      <p class="q-help">Even one personal day forces a proportional allocation of expenses (including depreciation) to nondeductible personal use. This hurts most in the year of acquisition.</p>
+      <div class="options" data-field="personalUseDays">
+        <button class="option" data-value="0">0 days<span class="option-detail">Best option</span></button>
+        <button class="option" data-value="1-7">1 – 7 days<span class="option-detail">Small personal allocation</span></button>
+        <button class="option" data-value="8-14">8 – 14 days<span class="option-detail">Larger personal allocation</span></button>
+        <button class="option" data-value="15-plus">15+ days<span class="option-detail">Property could be reclassified as a secondary residence</span></button>
+      </div>
+
+      <div style="margin-top: 14px; padding: 12px 14px; background: var(--accent-tint); border-left: 3px solid var(--brand); border-radius: 4px;">
+        <div style="font-family: var(--body); font-size: 10px; color: var(--brand); font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px;">What Counts as Personal Use</div>
+        <div style="font-family: var(--body); font-size: 12.5px; color: var(--ink-soft); line-height: 1.5;">
+          Time spent working on the property is not personal use. If the property is out of town and you stay overnight, log more than 4 hours of work that day to make it a work day instead of a personal day. Personal use exceeding the greater of 14 days or 10% of total rental days could trigger reclassification as a secondary residence under §280A.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q11 - OPERATING LOSS / FURNISHING ESTIMATE (NEW) -->
+  <div class="screen" data-screen="operating-loss">
+    <div class="qcard">
+      <div class="q-eyebrow">Operating Loss &amp; Furnishings</div>
+      <h2 class="q-title">Estimated operating loss and furnishing costs?</h2>
+      <p class="q-help">Depreciation is the biggest piece of year-one loss, but not the only piece. Operating expenses and furnishings stack on top.</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+
+        <div>
+          <label style="display: block; font-family: var(--body); font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Annual operating loss</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">$</span>
+            <input type="text" id="operating-loss-input" placeholder="0" inputmode="numeric">
+          </div>
+          <div class="input-hint" style="margin-top: 4px; font-size: 11px;">Mortgage interest (not principal), property tax, insurance, utilities, cleaning, fees, net of rental income.</div>
+        </div>
+
+        <div>
+          <label style="display: block; font-family: var(--body); font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Furniture and fixtures to set up the property</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">$</span>
+            <input type="text" id="furnishing-input" placeholder="0" inputmode="numeric">
+          </div>
+          <div class="input-hint" style="margin-top: 4px; font-size: 11px;">One-time cost to furnish the property. Eligible for 100% bonus depreciation.</div>
+        </div>
+
+      </div>
+
+      <div style="margin-top: 12px; padding: 12px 14px; background: var(--accent-tint); border-left: 3px solid var(--brand); border-radius: 4px;">
+        <div style="font-family: var(--body); font-size: 10px; color: var(--brand); font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px;">Why we ask</div>
+        <div style="font-family: var(--body); font-size: 12.5px; color: var(--ink-soft); line-height: 1.5;">
+          A typical first-year STR operates at a loss due to the cost to set up the property. These additional out-of-pocket expenses add to your bonus depreciation to determine your total non-passive rental loss for the year.
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; padding: 12px 14px; background: var(--accent-tint); border-left: 3px solid var(--brand); border-radius: 4px;">
+        <div style="font-family: var(--body); font-size: 10px; color: var(--brand); font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px;">Exclude Major Renovations</div>
+        <div style="font-family: var(--body); font-size: 12.5px; color: var(--ink-soft); line-height: 1.5;">
+          Do not include major renovation or repair costs in either field. If you're planning a significant renovation, the analysis will be more complex. Consult your CPA to model the full impact.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q12 - COST SEG STATUS -->
+  <div class="screen" data-screen="cost-seg">
+    <div class="qcard">
+      <div class="q-eyebrow">Cost Segregation</div>
+      <h2 class="q-title">Cost segregation study?</h2>
+      <p class="q-help">Cost seg is what unlocks year one savings. Without it, depreciation is taken straight-line over 39 years.</p>
+      <div class="options" data-field="costSegStatus">
+        <button class="option" data-value="done">Already completed</button>
+        <button class="option" data-value="planning">Planning to do one</button>
+        <button class="option" data-value="not-considered">Have not considered it</button>
+        <button class="option" data-value="filed-without">Already filed without it</button>
+      </div>
+
+      <div id="cost-seg-filed-note" style="display: none; margin-top: 14px; padding: 12px 14px; background: rgba(193, 75, 75, 0.06); border-left: 3px solid #c14b4b; border-radius: 4px;">
+        <div style="font-family: var(--body); font-size: 10px; color: #c14b4b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px;">Note &mdash; Return Already Filed</div>
+        <div style="font-family: var(--body); font-size: 12.5px; color: var(--ink); line-height: 1.5;">
+          If you've already filed your return without a cost segregation study, you'll need to either amend the return or file Form 3115 (Application for Change in Accounting Method) in a future year to capture the missed depreciation. We'll model the year-one savings here, but talk to your CPA about which path makes sense for your situation.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECAP -->
+  <div class="screen" data-screen="recap">
+    <div class="qcard">
+      <div class="q-eyebrow">Review</div>
+      <h2 class="q-title">Here is what you told us.</h2>
+      <p class="q-help">Click any answer to edit before we run the numbers.</p>
+      <div class="recap-list" id="recap-list"></div>
+    </div>
+    <div class="wf-note">Lets users flex inputs and re-run. Critical for paid audience trust, they want to see how the math responds to changes.</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" data-screen="results">
+    <div class="results-card">
+      <div class="results-property-ref" id="results-property-ref">
+        <div class="results-property-eyebrow">PROPERTY</div>
+        <div class="results-property-value" id="results-property-value"></div>
+      </div>
+      <div class="results-banner" id="results-banner"></div>
+      <div class="results-headline" style="padding-bottom: 10px;">
+        <div class="headline-eyebrow" id="loss-headline-eyebrow">Projected Year One Tax Loss</div>
+        <div class="headline-amount" id="loss-headline-amount" style="font-size: 24px; font-weight: 400;">—</div>
+      </div>
+      <div class="results-headline">
+        <div class="headline-eyebrow">Estimated Year One Federal Tax Savings</div>
+        <div class="headline-amount" id="headline-amount">—</div>
+        <div class="headline-sub" id="headline-sub">—</div>
+      </div>
+
+      <div class="recovery-block" id="recovery-block">
+        <div class="recovery-eyebrow">Down Payment Recovery</div>
+        <h3 class="recovery-title" id="recovery-title">How much of your down payment comes back in year one</h3>
+
+        <div class="bar-row">
+          <div class="bar-label">Down payment</div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 100%; background: #6a7484;">
+              <span class="bar-amount" id="dp-amount">$170,000</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-label">Tax savings</div>
+          <div class="bar-track">
+            <div class="bar-fill bar-fill-recovery" id="recovery-bar" style="width: 50%;">
+              <span class="bar-amount" id="rec-amount">$85,000</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="recovery-callout" id="recovery-callout">
+          You recover <strong id="recovery-pct">50%</strong> of your down payment in year one federal tax savings.
+        </div>
+      </div>
+
+      <div class="strategy-block">
+        <div class="strategy-eyebrow">Strategy Breakdown</div>
+        <div id="strategy-rows"></div>
+      </div>
+
+      <div id="results-amend-note" style="display: none; margin: 16px 0; padding: 12px 14px; background: rgba(193, 75, 75, 0.06); border-left: 3px solid #c14b4b; border-radius: 4px;">
+        <div style="font-family: var(--body); font-size: 10px; color: #c14b4b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 6px;">Note &mdash; Return Already Filed</div>
+        <div style="font-family: var(--body); font-size: 12.5px; color: var(--ink); line-height: 1.5;">You indicated your return is already filed without a cost segregation study. To capture the year-one savings modeled above, you will need to either amend your return or file Form 3115 (Application for Change in Accounting Method) in a future year. Talk to your CPA about which path makes sense for your situation.</div>
+      </div>
+
+      <div class="state-conformity-callout">
+        <div class="state-conformity-eyebrow">Federal Estimate Only</div>
+        <div class="state-conformity-body">
+          State treatment varies considerably. Many states do not conform to federal bonus depreciation, which can reduce or eliminate the state-level portion of these savings. We confirm state treatment before your return is filed.
+        </div>
+      </div>
+    </div>
+
+    <button class="assumptions-toggle" onclick="toggleAssumptions()">Show calculation assumptions &darr;</button>
+    <div class="assumptions assumptions-content" id="assumptions">
+      <strong>How we got there:</strong>
+      <div id="assumptions-text" style="margin-top: 6px;"></div>
+    </div>
+
+    <div class="results-cta">
+      <div class="cta-eyebrow">Next Step</div>
+      <div class="cta-title">Run this against your actual return.</div>
+      <div class="cta-body">This estimate is directional. To deploy the strategy on your specific return, including state treatment, prior-year carryforwards, and the exact cost seg allocation for your property, book a meeting with one of our CPAs.</div>
+      <div class="cta-actions">
+        <a href="https://www.aiolacpa.com/contact-str-calculator/?utm_source=str_calculator&utm_medium=tool&utm_campaign=str_lead_capture" target="_blank" rel="noopener" class="cta-btn" style="text-decoration:none;text-align:center;" onclick="if(typeof gtag==='function'){gtag('event','book_meeting_click',{event_category:'CTA',event_label:'STR Calculator Results'});}">Book a Meeting With One of Our CPAs &rarr;</a>
+        <button class="cta-btn cta-btn-secondary" onclick="openEmailModal()">Download My Results (PDF)</button>
+        <button class="cta-btn cta-btn-secondary" onclick="resetCalculator()">Run a New Analysis</button>
+      </div>
+    </div>
+
+    <div class="results-fineprint" style="font-family: var(--body); font-size: 10.5px; color: var(--ink-soft); text-align: center; line-height: 1.5; margin-top: 14px;">This calculator is for educational purposes only and not tax advice. Numbers are directional estimates based on the inputs you provide and typical cost segregation allocations. Final numbers depend on your specific facts, the actual cost seg study, state conformity rules in your jurisdiction, prior-year carryforwards, and your full federal return context. Aiola CPA, PLLC does not guarantee any outcome based on these estimates.</div>
+
+    <div class="wf-note">Results page priorities (top to bottom): qualification verdict → headline savings → down payment recovery viz → strategy breakdown → state conformity callout → assumptions (collapsed) → CTA → fineprint disclaimer. State conformity note added since most states do not conform to federal bonus depreciation.</div>
+  </div>
+
+  <!-- EMAIL MODAL -->
+  <div class="email-modal-overlay" id="email-modal-overlay">
+    <div class="email-modal">
+      <button class="modal-close" onclick="closeEmailModal()">&times;</button>
+
+      <!-- DEFAULT STATE -->
+      <div class="modal-state active" id="modal-default">
+        <h3>Get your results as a PDF</h3>
+        <p>Enter your email to download a PDF of your results.</p>
+        <input type="email" id="modal-email-input" placeholder="you@example.com">
+        <div class="modal-interests">
+          <div class="modal-interests-label">Stay in the loop (optional):</div>
+          <label class="modal-checkbox"><input type="checkbox" id="interest-newsletter"> <span>Newsletter &ndash; The Tax-Savvy Real Estate Investor</span></label>
+          <label class="modal-checkbox"><input type="checkbox" id="interest-blog"> <span>Blog</span></label>
+          <label class="modal-checkbox"><input type="checkbox" id="interest-taxinsights"> <span>Tax &amp; Accounting Insights</span></label>
+          <label class="modal-checkbox"><input type="checkbox" id="interest-webinars"> <span>Exclusive Webinars &amp; Events</span></label>
+          <label class="modal-checkbox"><input type="checkbox" id="interest-services"> <span>New Services &amp; Offerings</span></label>
+        </div>
+        <div class="email-modal-actions">
+          <button class="modal-cancel" onclick="closeEmailModal()">Cancel</button>
+          <button class="modal-submit" onclick="submitEmailModal()">Download My Results</button>
+        </div>
+        <div class="modal-consent-text">
+          By submitting, you consent to allow Aiola CPA, PLLC to store and process the information above to provide the content requested and to contact you about the topics you selected. You may unsubscribe at any time.
+        </div>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div class="modal-state" id="modal-loading">
+        <div class="modal-loading">Generating your PDF&hellip;</div>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div class="modal-state" id="modal-success">
+        <div class="modal-success">
+          <div class="checkmark">&#10003;</div>
+          <h3>Your PDF is ready</h3>
+          <p>We've saved your results as a PDF to your device — check your Downloads folder. We've also noted your email so we can share helpful STR tax resources. No spam, unsubscribe anytime.</p>
+          <button class="modal-submit" style="margin-top:12px;width:100%;" onclick="closeEmailModal()">Done</button>
+        </div>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div class="modal-state" id="modal-error">
+        <div class="modal-error">
+          <p>Something went wrong. Please try again.</p>
+          <button class="modal-submit" style="margin-top:12px;width:100%;background:var(--fail);" onclick="resetEmailModalToDefault()">Try Again</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="nav" id="nav">
+    <button class="btn btn-ghost" id="back-btn" onclick="back()">&larr; Back</button>
+    <button class="btn btn-primary" id="next-btn" onclick="next()" disabled>Next &rarr;</button>
+  </div>
+
+
+</div>
+
+<script>
+  // ============================================================
+  // STATE
+  // ============================================================
+  const state = {
+    filingStatus: null,
+    income: null,
+    propertyAddress: '',
+    propertyStatus: null,
+    contractSignedDate: null,
+    closingDate: null,
+    purchasePrice: null,
+    downPaymentPct: null,
+    placedInServiceDate: null,
+    landAllocation: null,        // numeric, defaults to 20 if blank
+    avgStay: null,
+    avgStaySubstantialServices: null,
+    yourHours: null,
+    othersMaxHours: null,
+    personalUseDays: null,
+    operatingLoss: null,         // numeric, defaults to 0 if blank
+    furnishingCosts: null,       // numeric, defaults to 0 if blank
+    costSegStatus: null,
+  };
+
+  // Step sequence. Each step has an id and an optional `show` predicate
+  // for branching logic.
+  const steps = [
+    { id: 'welcome' },
+    { id: 'filing-status' },
+    { id: 'income' },
+    { id: 'property-address' },
+    { id: 'property-status' },
+    { id: 'purchase-price' },
+    { id: 'down-payment' },
+    { id: 'placed-in-service' },
+    { id: 'land-allocation' },
+    { id: 'avg-stay' },
+    { id: 'your-hours' },
+    { id: 'others-hours', show: () => state.yourHours !== '500-plus' },
+    { id: 'personal-use' },
+    { id: 'operating-loss' },
+    { id: 'cost-seg' },
+    { id: 'recap' },
+    { id: 'results' },
+  ];
+
+  let currentIndex = 0;
+
+  function getVisibleSteps() {
+    return steps.filter(s => !s.show || s.show());
+  }
+
+  function getCurrentStep() {
+    return steps[currentIndex];
+  }
+
+  function showStep(index) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    const step = steps[index];
+    document.querySelector(`[data-screen="${step.id}"]`).classList.add('active');
+    currentIndex = index;
+    updateProgress();
+    updateNav();
+    onStepShown(step);
+  }
+
+  function next() {
+    // skip steps whose `show` predicate fails
+    let i = currentIndex + 1;
+    while (i < steps.length && steps[i].show && !steps[i].show()) i++;
+    if (i >= steps.length) return;
+    if (steps[i].id === 'recap') buildRecap();
+    if (steps[i].id === 'results') runCalculation();
+    showStep(i);
+  }
+
+  function back() {
+    let i = currentIndex - 1;
+    while (i >= 0 && steps[i].show && !steps[i].show()) i--;
+    if (i < 0) return;
+    showStep(i);
+  }
+
+  function jumpTo(stepId) {
+    const i = steps.findIndex(s => s.id === stepId);
+    if (i >= 0) showStep(i);
+  }
+
+  function updateProgress() {
+    const visible = getVisibleSteps();
+    const visibleIndex = visible.findIndex(s => s.id === steps[currentIndex].id);
+    const pct = visible.length > 1 ? (visibleIndex / (visible.length - 1)) * 100 : 0;
+    document.getElementById('progress-fill').style.width = `${pct}%`;
+    const step = steps[currentIndex];
+    document.getElementById('header-step').textContent = '';
+  }
+
+  function updateNav() {
+    const step = steps[currentIndex];
+    const nav = document.getElementById('nav');
+    const backBtn = document.getElementById('back-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (step.id === 'welcome' || step.id === 'results') {
+      nav.style.display = 'none';
+      return;
+    }
+    nav.style.display = 'flex';
+    backBtn.style.visibility = currentIndex === 1 ? 'hidden' : 'visible';
+
+    // Validate
+    nextBtn.disabled = !isStepComplete(step);
+    nextBtn.textContent = step.id === 'cost-seg' ? 'Review Answers →' :
+                          step.id === 'recap' ? 'Run the Numbers →' :
+                          'Next →';
+  }
+
+  function isStepComplete(step) {
+    switch (step.id) {
+      case 'filing-status': return !!state.filingStatus;
+      case 'income': return state.income !== null && state.income > 0;
+      case 'property-address': return state.propertyAddress.trim().length > 0;
+      case 'property-status':
+        if (!state.propertyStatus) return false;
+        if (state.propertyStatus === 'own') return !!state.contractSignedDate && !!state.closingDate;
+        return true;
+      case 'purchase-price': return state.purchasePrice && state.purchasePrice > 0;
+      case 'down-payment': return state.downPaymentPct !== null && state.downPaymentPct > 0;
+      case 'placed-in-service': return !!state.placedInServiceDate;
+      case 'land-allocation': return true; // blank uses 20% default
+      case 'avg-stay':
+        if (!state.avgStay) return false;
+        if (state.avgStay === '30-or-less') return !!state.avgStaySubstantialServices;
+        return true;
+      case 'your-hours': return !!state.yourHours;
+      case 'others-hours': return !!state.othersMaxHours;
+      case 'personal-use': return state.personalUseDays !== null;
+      case 'operating-loss': return true; // both inputs default to 0
+      case 'cost-seg': return !!state.costSegStatus;
+      case 'recap': return true;
+      default: return true;
+    }
+  }
+
+  function onStepShown(step) {
+    // Update down payment dollar hint when we land on the down-payment step
+    if (step.id === 'down-payment' && state.purchasePrice && state.downPaymentPct) {
+      document.getElementById('dp-dollar-hint').textContent = `= $${formatNum(state.purchasePrice * state.downPaymentPct / 100)} based on a $${formatNum(state.purchasePrice)} purchase price`;
+    }
+  }
+
+  // ============================================================
+  // OPTION CLICK HANDLERS
+  // ============================================================
+  document.querySelectorAll('.options').forEach(group => {
+    const field = group.dataset.field;
+    group.querySelectorAll('.option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        btn.classList.add('selected');
+        state[field] = btn.dataset.value;
+        // Show/hide avg stay substantial services sub-question
+        if (field === 'avgStay') {
+          const subEl = document.getElementById('substantial-services-sub');
+          if (btn.dataset.value === '30-or-less') {
+            subEl.style.display = 'block';
+          } else {
+            subEl.style.display = 'none';
+            state.avgStaySubstantialServices = null;
+            subEl.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+          }
+        }
+        // Show/hide cost seg filed-without note
+        if (field === 'costSegStatus') {
+          const filedNote = document.getElementById('cost-seg-filed-note');
+          filedNote.style.display = btn.dataset.value === 'filed-without' ? 'block' : 'none';
+        }
+        // Show/hide property date sub-questions
+        if (field === 'propertyStatus') {
+          const datesEl = document.getElementById('property-dates');
+          if (btn.dataset.value === 'own') {
+            datesEl.style.display = 'block';
+          } else {
+            datesEl.style.display = 'none';
+            state.contractSignedDate = null;
+            state.closingDate = null;
+            document.getElementById('contract-signed-date').value = '';
+            document.getElementById('closing-date').value = '';
+          }
+        }
+        updateNav();
+      });
+    });
+  });
+
+  // Property date inputs
+  document.getElementById('contract-signed-date').addEventListener('change', (e) => {
+    state.contractSignedDate = e.target.value || null;
+    updateNav();
+  });
+  document.getElementById('closing-date').addEventListener('change', (e) => {
+    state.closingDate = e.target.value || null;
+    updateNav();
+  });
+
+  // Income input (dollar, with comma formatting)
+  document.getElementById('income-input').addEventListener('input', (e) => {
+    const cleaned = e.target.value.replace(/[^0-9]/g, '');
+    state.income = cleaned ? parseInt(cleaned) : null;
+    if (cleaned) e.target.value = parseInt(cleaned).toLocaleString();
+    updateNav();
+  });
+
+  // Property address input
+  document.getElementById('property-address-input').addEventListener('input', (e) => {
+    state.propertyAddress = e.target.value;
+    updateNav();
+  });
+
+  // Placed in service date input
+  document.getElementById('placed-in-service-input').addEventListener('change', (e) => {
+    state.placedInServiceDate = e.target.value || null;
+    updateNav();
+  });
+
+  // Purchase price input
+  document.getElementById('purchase-price-input').addEventListener('input', (e) => {
+    const cleaned = e.target.value.replace(/[^0-9]/g, '');
+    state.purchasePrice = cleaned ? parseInt(cleaned) : null;
+    if (cleaned) e.target.value = parseInt(cleaned).toLocaleString();
+    updateNav();
+  });
+
+  // Down payment input (percentage)
+  document.getElementById('down-payment-input').addEventListener('input', (e) => {
+    const cleaned = e.target.value.replace(/[^0-9.]/g, '');
+    if (cleaned === '' || isNaN(parseFloat(cleaned))) {
+      state.downPaymentPct = null;
+      document.getElementById('dp-dollar-hint').textContent = '';
+    } else {
+      const n = parseFloat(cleaned);
+      state.downPaymentPct = n;
+      if (state.purchasePrice && n > 0) {
+        document.getElementById('dp-dollar-hint').textContent = `= $${formatNum(state.purchasePrice * n / 100)} based on a $${formatNum(state.purchasePrice)} purchase price`;
+      } else {
+        document.getElementById('dp-dollar-hint').textContent = '';
+      }
+    }
+    e.target.value = cleaned;
+    updateNav();
+  });
+
+  // Land allocation input (percentage, no comma formatting needed)
+  document.getElementById('land-allocation-input').addEventListener('input', (e) => {
+    const cleaned = e.target.value.replace(/[^0-9]/g, '');
+    if (cleaned === '') {
+      state.landAllocation = null; // null = use 20% default in calc
+    } else {
+      const n = parseInt(cleaned);
+      // Clamp to 0-95 (sanity bound)
+      state.landAllocation = Math.min(Math.max(n, 0), 95);
+    }
+    e.target.value = cleaned;
+    updateNav();
+  });
+
+  // Operating loss input (dollar, with comma formatting)
+  document.getElementById('operating-loss-input').addEventListener('input', (e) => {
+    const cleaned = e.target.value.replace(/[^0-9]/g, '');
+    state.operatingLoss = cleaned ? parseInt(cleaned) : 0;
+    if (cleaned) e.target.value = parseInt(cleaned).toLocaleString();
+    updateNav();
+  });
+
+  // Furnishing costs input (dollar, with comma formatting)
+  document.getElementById('furnishing-input').addEventListener('input', (e) => {
+    const cleaned = e.target.value.replace(/[^0-9]/g, '');
+    state.furnishingCosts = cleaned ? parseInt(cleaned) : 0;
+    if (cleaned) e.target.value = parseInt(cleaned).toLocaleString();
+    updateNav();
+  });
+
+  // ============================================================
+  // RECAP
+  // ============================================================
+  const labelMap = {
+    filingStatus: { label: 'Filing status', map: { single: 'Single', mfj: 'Married Filing Jointly', mfs: 'Married Filing Separately', hoh: 'Head of Household' } },
+    income: { label: 'Household income', format: v => `$${formatNum(v)}` },
+    propertyStatus: { label: 'Property status', map: { 'own': 'Already own', 'under-contract': 'Under contract', 'planning': 'Planning to buy' } },
+    contractSignedDate: { label: 'Contract signed', format: v => new Date(v + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) },
+    closingDate: { label: 'Closing date', format: v => new Date(v + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) },
+    purchasePrice: { label: 'Purchase price', format: v => `$${formatNum(v)}` },
+    downPaymentPct: { label: 'Down payment', format: v => `${v}%` },
+
+    placedInServiceDate: { label: 'Placed in service', format: v => new Date(v + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) },
+    landAllocation: { label: 'Land allocation', format: v => `${v}%` },
+    avgStay: { label: 'Avg. guest stay', map: { '7-or-less': '7 days or less', '30-or-less': '30 days or less', 'longer-than-30': 'Longer than 30 days' } },
+    avgStaySubstantialServices: { label: 'Substantial services', map: { yes: 'Yes', no: 'No' } },
+    yourHours: { label: 'Your hours / year', map: { 'under-100': 'Under 100 hours', '100-500': '100 – 500 hours', '500-plus': '500+ hours' } },
+    othersMaxHours: { label: 'Others\' max hours', map: { 'under-25': 'Under 25 hours', '25-100': '25 – 100 hours', '100-250': '100 – 250 hours', '250-500': '250 – 500 hours', '500-plus': '500+ hours' } },
+    personalUseDays: { label: 'Personal use days', map: { '0': '0 days', '1-7': '1 – 7 days', '8-14': '8 – 14 days', '15-plus': '15+ days' } },
+    operatingLoss: { label: 'Operating loss estimate', format: v => `$${formatNum(v)}` },
+    furnishingCosts: { label: 'Furnishing costs', format: v => `$${formatNum(v)}` },
+    costSegStatus: { label: 'Cost seg study', map: { 'done': 'Completed', 'planning': 'Planning', 'not-considered': 'Not considered', 'filed-without': 'Filed without' } },
+  };
+
+  function buildRecap() {
+    const list = document.getElementById('recap-list');
+    list.innerHTML = '';
+    Object.keys(state).forEach(key => {
+      if (state[key] == null) return;
+      if (key === 'othersMaxHours' && state.yourHours === '500-plus') return;
+      if ((key === 'contractSignedDate' || key === 'closingDate') && state.propertyStatus !== 'own') return;
+      if (key === 'avgStaySubstantialServices' && state.avgStay !== '30-or-less') return;
+      // Hide zero-value defaults to keep recap clean
+      if (key === 'operatingLoss' && state[key] === 0) return;
+      if (key === 'furnishingCosts' && state[key] === 0) return;
+      const cfg = labelMap[key];
+      if (!cfg) return;
+      const value = cfg.format ? cfg.format(state[key]) : (cfg.map ? cfg.map[state[key]] : state[key]);
+      const stepId = stepIdForField(key);
+      const div = document.createElement('div');
+      div.className = 'recap-item';
+      div.innerHTML = `
+        <div class="recap-label">${cfg.label}</div>
+        <div style="display:flex; align-items:center;">
+          <div class="recap-value">${value}</div>
+          ${stepId ? `<button class="recap-edit" onclick="jumpTo('${stepId}')">edit</button>` : ''}
+        </div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function stepIdForField(field) {
+    const mapping = {
+      filingStatus: 'filing-status',
+      income: 'income',
+      propertyStatus: 'property-status',
+      contractSignedDate: 'property-status',
+      closingDate: 'property-status',
+      purchasePrice: 'purchase-price',
+      downPaymentPct: 'down-payment',
+      placedInServiceDate: 'placed-in-service',
+      landAllocation: 'land-allocation',
+      avgStay: 'avg-stay',
+      avgStaySubstantialServices: 'avg-stay',
+      yourHours: 'your-hours',
+      othersMaxHours: 'others-hours',
+      personalUseDays: 'personal-use',
+      operatingLoss: 'operating-loss',
+      furnishingCosts: 'operating-loss',
+      costSegStatus: 'cost-seg',
+    };
+    return mapping[field];
+  }
+
+  // ============================================================
+  // CALCULATION
+  // ============================================================
+  let lastResult = null;
+
+  function runCalculation() {
+    const r = calculate();
+    lastResult = r;
+
+    // Property address
+    const propEl = document.getElementById('results-property-value');
+    if (propEl) propEl.textContent = state.propertyAddress || '';
+    const propRefBlock = document.getElementById('results-property-ref');
+    if (propRefBlock) propRefBlock.style.display = state.propertyAddress ? 'block' : 'none';
+
+    // Banner
+    const banner = document.getElementById('results-banner');
+    banner.className = 'results-banner ' + r.bannerClass;
+    banner.textContent = r.bannerText;
+
+    // Loss headline
+    document.getElementById('loss-headline-amount').textContent =
+      r.qualifies ? `$${formatNum(r.totalLossLow)} – $${formatNum(r.totalLossHigh)}` : '$0';
+
+    // Savings headline
+    document.getElementById('headline-amount').textContent =
+      r.qualifies ? `$${formatNum(r.savingsLow)} – $${formatNum(r.savingsHigh)}` : '$0 (current year)';
+    document.getElementById('headline-sub').textContent = r.headlineSub;
+
+    // Recovery viz
+    const dp = r.downPayment;
+    document.getElementById('dp-amount').textContent = `$${formatNum(dp)}`;
+    const recMid = (r.savingsLow + r.savingsHigh) / 2;
+    document.getElementById('rec-amount').textContent =
+      r.qualifies ? `$${formatNum(Math.round(recMid))}` : '$0';
+    const recPct = r.qualifies ? (recMid / dp) * 100 : 0;
+    const barWidth = Math.min(100, Math.max(8, recPct));
+    document.getElementById('recovery-bar').style.width = `${barWidth}%`;
+    if (!r.qualifies) {
+      document.getElementById('recovery-callout').innerHTML =
+        `Year one savings apply only once you qualify. <strong>${Math.round(r.qualGapPct || 0)}%</strong> of your down payment is on the table once qualified.`;
+    } else {
+      document.getElementById('recovery-callout').innerHTML =
+        `You recover <strong>${Math.round(recPct)}%</strong> of your down payment in year one federal tax savings.`;
+    }
+
+    // Strategy breakdown
+    const stratEl = document.getElementById('strategy-rows');
+    stratEl.innerHTML = '';
+    buildStrategyBreakdown().forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'strategy-row';
+      div.innerHTML = `
+        <div class="strategy-label-block">
+          <div class="strategy-label">${s.label}</div>
+          <div class="strategy-note">${s.note}</div>
+        </div>
+        <div class="strategy-status status-${s.status}">${s.statusLabel}</div>
+      `;
+      stratEl.appendChild(div);
+    });
+
+    // §3115 amend-return callout
+    const amendNote = document.getElementById('results-amend-note');
+    if (state.costSegStatus === 'filed-without') {
+      amendNote.style.display = 'block';
+    } else {
+      amendNote.style.display = 'none';
+    }
+
+    // Assumptions
+    document.getElementById('assumptions-text').innerHTML = r.assumptions;
+  }
+
+  function calculate() {
+    const purchasePrice = state.purchasePrice || 800000;
+    const dpPct = parseFloat(state.downPaymentPct || 20);
+    const downPayment = purchasePrice * dpPct / 100;
+
+    // 2025 federal marginal rate from actual brackets
+    function getMarginalRate(income, filingStatus) {
+      const brackets = {
+        single:  [[11925,0.10],[48475,0.12],[103350,0.22],[197300,0.24],[250525,0.32],[626350,0.35],[Infinity,0.37]],
+        mfj:     [[23850,0.10],[96950,0.12],[206700,0.22],[394600,0.24],[501050,0.32],[751600,0.35],[Infinity,0.37]],
+        hoh:     [[17000,0.10],[64850,0.12],[103350,0.22],[197300,0.24],[250525,0.32],[626350,0.35],[Infinity,0.37]],
+        mfs:     [[11925,0.10],[48475,0.12],[103350,0.22],[197300,0.24],[250525,0.32],[375800,0.35],[Infinity,0.37]],
+      };
+      const b = brackets[filingStatus] || brackets.single;
+      for (const [limit, rate] of b) {
+        if (income <= limit) return rate;
+      }
+      return 0.37;
+    }
+    const marginalRate = getMarginalRate(state.income || 0, state.filingStatus);
+
+    // Bonus dep rate based on acquisition + placed-in-service dates (OBBBA)
+    let bonusRate = 1.00;
+    let bonusRateNote = 'acquired and placed in service after January 19, 2025';
+    const obbbaDate = new Date('2025-01-20');
+
+    if (state.propertyStatus === 'own' && state.contractSignedDate) {
+      const contractDate = new Date(state.contractSignedDate + 'T00:00:00');
+      if (contractDate >= obbbaDate) {
+        bonusRate = 1.00;
+        bonusRateNote = 'acquired after January 19, 2025';
+      } else {
+        // Pre-OBBBA acquisition: phase-down based on placed-in-service year
+        const pisYear = state.placedInServiceDate ? new Date(state.placedInServiceDate + 'T00:00:00').getFullYear() : 2025;
+        const phaseDown = { 2024: 0.60, 2025: 0.40, 2026: 0.20 };
+        bonusRate = phaseDown[pisYear] !== undefined ? phaseDown[pisYear] : (pisYear < 2024 ? 0.80 : 0.00);
+        bonusRateNote = `acquired before January 20, 2025; placed in service in ${pisYear} phase-down year`;
+      }
+    } else {
+      // under-contract or planning: assume post-OBBBA
+      bonusRate = 1.00;
+      bonusRateNote = 'acquisition expected after January 19, 2025';
+    }
+
+    // Land allocation: user input or 20% default
+    const landPct = (state.landAllocation != null ? state.landAllocation : 20) / 100;
+    const buildingPct = 1 - landPct;
+    const buildingBasis = purchasePrice * buildingPct;
+
+    // Cost seg allocation: 25-35% to short-life property (5/7/15-yr MACRS)
+    const allocLow = 0.25, allocMid = 0.30, allocHigh = 0.35;
+
+    // Year one accelerated depreciation on building (cost seg + bonus dep)
+    const yearOneAccelLow  = buildingBasis * allocLow  * bonusRate;
+    const yearOneAccelMid  = buildingBasis * allocMid  * bonusRate;
+    const yearOneAccelHigh = buildingBasis * allocHigh * bonusRate;
+
+    // Regular straight-line on remaining basis (half-year convention, year one)
+    const slDep = (buildingBasis * (1 - allocMid)) / 39 * 0.5;
+
+    // Furnishing costs: 100% bonus depreciation as personal property (MACRS ≤ 7yr)
+    const furnishings = state.furnishingCosts || 0;
+    const furnishingDep = furnishings * bonusRate;
+
+    // Operating loss: passes through directly when qualified
+    const opLoss = state.operatingLoss || 0;
+
+    // Total deductible loss (depreciation + operating loss + furnishings)
+    let totalLossLow  = yearOneAccelLow  + slDep + furnishingDep + opLoss;
+    let totalLossMid  = yearOneAccelMid  + slDep + furnishingDep + opLoss;
+    let totalLossHigh = yearOneAccelHigh + slDep + furnishingDep + opLoss;
+
+    // Personal use allocation (rough — proportional reduction)
+    const personalUseFactor = {
+      '0': 1.0,
+      '1-7': 0.97,
+      '8-14': 0.93,
+      '15-plus': 0.0,  // reclassified as residence, deduction lost
+    };
+    const puFactor = personalUseFactor[state.personalUseDays] ?? 1.0;
+    totalLossLow  *= puFactor;
+    totalLossMid  *= puFactor;
+    totalLossHigh *= puFactor;
+
+    // Qualification logic
+    const yourHours = state.yourHours;
+    const othersHours = state.othersMaxHours;
+    let qualifies = false;
+    let qualPath = '';
+    let qualNote = '';
+
+    // Stay qualification check
+    let stayQualifies = false;
+    let stayDisqualReason = '';
+    if (state.avgStay === '7-or-less') {
+      stayQualifies = true;
+    } else if (state.avgStay === '30-or-less' && state.avgStaySubstantialServices === 'yes') {
+      stayQualifies = true;
+    } else if (state.avgStay === '30-or-less' && state.avgStaySubstantialServices === 'no') {
+      stayQualifies = false;
+      stayDisqualReason = 'No substantial services. Average stays of 8–30 days only qualify when substantial services are provided.';
+    } else if (state.avgStay === 'longer-than-30') {
+      stayQualifies = false;
+      stayDisqualReason = 'Average stay over 30 days. The strategy requires stays of 7 days or less, or 8–30 days with substantial services.';
+    }
+
+    if (!stayQualifies) {
+      qualifies = false;
+      qualPath = 'Does Not Qualify';
+      qualNote = stayDisqualReason || 'Average guest stay does not meet the qualification threshold.';
+    } else if (yourHours === '500-plus') {
+      // Test 1: 500+ hours alone
+      qualifies = true;
+      qualPath = 'Test 1';
+      qualNote = 'You qualify under the 500+ hour test. Others\' hours are not a constraint.';
+    } else if (yourHours === '100-500') {
+      // Test 3: 100+ hours and more than anyone else
+      if (othersHours === 'under-25' || othersHours === '25-100') {
+        qualifies = true;
+        qualPath = 'Test 3';
+        qualNote = 'You qualify under test 3 (100+ hours and more than any single other person).';
+      } else if (othersHours === '100-250') {
+        qualifies = false;
+        qualPath = 'Test 3 risky';
+        qualNote = 'Test 3 is borderline. Another person may exceed your hours in the overlapping range. Consider scaling to 500+ hours (test 1) or reducing third party involvement.';
+      } else {
+        // othersHours is '250-500' or '500-plus'
+        qualifies = false;
+        qualPath = 'Test 3 risky';
+        qualNote = 'Test 3 fails. Another person exceeds or matches your hours. Consider scaling to 500+ hours (test 1) or reducing third party involvement.';
+      }
+    } else {
+      // under-100
+      qualifies = false;
+      qualPath = 'Below threshold';
+      qualNote = 'You need at least 100 hours per year (and more than any single other person) to qualify, or 500+ hours alone.';
+    }
+
+    // Apply qualification: if not qualified, year one savings = $0 (passive carryforward)
+    let savingsLow, savingsMid, savingsHigh;
+    if (qualifies) {
+      savingsLow  = totalLossLow  * marginalRate;
+      savingsMid  = totalLossMid  * marginalRate;
+      savingsHigh = totalLossHigh * marginalRate;
+    } else {
+      savingsLow = savingsMid = savingsHigh = 0;
+    }
+
+    // For non-qualifying users, calculate what savings WOULD be at the qualifying threshold
+    const potentialSavings = totalLossMid * marginalRate;
+    const qualGapPct = (potentialSavings / downPayment) * 100;
+
+    // Banner
+    let bannerClass, bannerText, headlineSub;
+    if (qualifies) {
+      bannerClass = 'banner-pass';
+      bannerText = '✓ You Qualify';
+      headlineSub = `Federal tax savings range based on cost seg allocation of ${Math.round(allocLow*100)}–${Math.round(allocHigh*100)}% to short-life property`;
+    } else if (qualPath === 'Test 3 risky') {
+      bannerClass = 'banner-borderline';
+      bannerText = `⚠ Borderline · ${qualPath}`;
+      headlineSub = qualNote;
+    } else {
+      bannerClass = 'banner-fail';
+      bannerText = '✗ Does Not Qualify';
+      headlineSub = qualNote;
+    }
+
+    // Strategy breakdown
+    const strategies = [];
+
+    // Determine which material participation line to show (only one)
+    let mpLabel, mpNote, mpStatus, mpStatusLabel;
+
+    if (yourHours === '500-plus') {
+      // User qualifies via Test 1 (500+ hours alone)
+      mpLabel = 'Material Participation — 500+ hours';
+      mpNote = 'You are past the threshold alone. Others\' hours are not a constraint.';
+      mpStatus = 'applies';
+      mpStatusLabel = 'Target';
+    } else if (yourHours === '100-500') {
+      // User is on Test 3 path
+      mpLabel = 'Material Participation — 100+ hours and more than anyone else';
+      if (qualPath === 'Test 3') {
+        mpNote = 'Your hours exceed everyone else\'s.';
+        mpStatus = 'applies';
+        mpStatusLabel = 'Target';
+      } else if (qualPath === 'Test 3 risky') {
+        mpNote = 'Risky. Another person may exceed your hours.';
+        mpStatus = 'warn';
+        mpStatusLabel = 'Risky';
+      } else {
+        mpNote = 'Another person exceeds or matches your hours.';
+        mpStatus = 'na';
+        mpStatusLabel = 'Not Met';
+      }
+    } else {
+      // under-100 hours — below threshold; show 500+ path as the achievable target
+      mpLabel = 'Material Participation — 500+ hours';
+      mpNote = 'Below threshold. Scale your annual hours to 500+ to qualify alone.';
+      mpStatus = 'na';
+      mpStatusLabel = 'Possible';
+    }
+
+    strategies.push({
+      label: mpLabel,
+      note: mpNote,
+      status: mpStatus,
+      statusLabel: mpStatusLabel,
+    });
+    strategies.push({
+      label: 'Cost Segregation + Bonus Depreciation',
+      note: bonusRate === 1.0
+        ? `Qualifies for 100% bonus depreciation. Land allocation ${Math.round(landPct*100)}%, building basis $${formatNum(buildingBasis)}.`
+        : `${Math.round(bonusRate*100)}% bonus dep (${bonusRateNote}). Land allocation ${Math.round(landPct*100)}%, building basis $${formatNum(buildingBasis)}.`,
+      status: 'applies',
+      statusLabel: 'Applies',
+    });
+    if (furnishings > 0) {
+      strategies.push({
+        label: 'Furnishings (100% Bonus Depreciation)',
+        note: `$${formatNum(furnishings)} in furnishings qualify for 100% bonus depreciation.`,
+        status: 'applies',
+        statusLabel: 'Applies',
+      });
+    }
+    if (opLoss > 0) {
+      strategies.push({
+        label: 'Operating Loss',
+        note: `$${formatNum(opLoss)} in net operating loss flows through under non-passive treatment when the criteria are met.`,
+        status: 'applies',
+        statusLabel: 'Applies',
+      });
+    }
+    if (state.personalUseDays === '15-plus') {
+      strategies.push({
+        label: 'Personal Use Allocation',
+        note: '15+ days of personal use reclassifies the property as a residence under §280A. Deduction is severely limited or eliminated.',
+        status: 'warn',
+        statusLabel: 'Critical',
+      });
+    } else if (state.personalUseDays === '8-14' || state.personalUseDays === '1-7') {
+      strategies.push({
+        label: 'Personal Use Allocation',
+        note: `Your personal use days reduce the deductible portion. Year one impact is included in the savings range above.`,
+        status: 'warn',
+        statusLabel: 'Reducing',
+      });
+    }
+
+    // Assumptions text
+    const opLossLine = opLoss > 0 ? `<li>Operating loss added: $${formatNum(opLoss)} (mortgage interest, property tax, insurance, utilities, etc., net of rental income)</li>` : '';
+    const furnLine = furnishings > 0 ? `<li>Furnishings added: $${formatNum(furnishings)} × ${Math.round(bonusRate*100)}% bonus dep = $${formatNum(furnishingDep)} (MACRS personal property)</li>` : '';
+    const assumptions = `
+      <ul style="margin: 0; padding-left: 18px;">
+        <li>Purchase price: $${formatNum(purchasePrice)} × ${Math.round(buildingPct*100)}% = $${formatNum(buildingBasis)} depreciable basis (${Math.round(landPct*100)}% land)</li>
+        <li>Cost seg short-life allocation modeled at ${Math.round(allocLow*100)}%–${Math.round(allocHigh*100)}% of building basis</li>
+        <li>Bonus depreciation rate: ${Math.round(bonusRate*100)}% (${bonusRateNote})</li>
+        <li>Year one straight-line depreciation on remaining basis over 39 years (half-year convention)</li>
+        ${furnLine}
+        ${opLossLine}
+        <li>Personal use factor applied: ${(puFactor*100).toFixed(0)}% deductible after allocation</li>
+        <li>Marginal federal rate: ${(marginalRate*100).toFixed(0)}% (2025 federal brackets, ${state.filingStatus === 'mfj' ? 'MFJ' : state.filingStatus === 'hoh' ? 'HoH' : state.filingStatus === 'mfs' ? 'MFS' : 'Single'})</li>
+        <li><strong>Federal only.</strong> State conformity to bonus depreciation varies by jurisdiction.</li>
+      </ul>
+    `;
+
+    return {
+      qualifies,
+      bannerClass,
+      bannerText,
+      headlineSub,
+      totalLossLow: Math.round(totalLossLow),
+      totalLossHigh: Math.round(totalLossHigh),
+      savingsLow: Math.round(savingsLow),
+      savingsHigh: Math.round(savingsHigh),
+      downPayment,
+      qualGapPct,
+      strategies,
+      assumptions,
+    };
+  }
+
+  // ============================================================
+  // UTILS
+  // ============================================================
+  function formatNum(n) {
+    return Math.round(n).toLocaleString();
+  }
+
+  function toggleAssumptions() {
+    document.getElementById('assumptions').classList.toggle('open');
+  }
+
+  // ============================================================
+  // EMAIL MODAL
+  // ============================================================
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxlISxngY0Sk964vzet_UwnkfBZfCGsEbLMfdbY895wfbpepcP6inep7VvHAL-gvFe0/exec';
+
+  function openEmailModal() {
+    if (!lastResult) return;
+    resetEmailModalToDefault();
+    document.getElementById('email-modal-overlay').classList.add('active');
+  }
+
+  function closeEmailModal() {
+    document.getElementById('email-modal-overlay').classList.remove('active');
+  }
+
+  function resetEmailModalToDefault() {
+    showModalState('modal-default');
+    document.getElementById('modal-email-input').value = '';
+    ['interest-newsletter','interest-blog','interest-taxinsights','interest-webinars','interest-services'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.checked = false;
+    });
+  }
+
+  function showModalState(id) {
+    document.querySelectorAll('.email-modal .modal-state').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  async function submitEmailModal() {
+    const emailInput = document.getElementById('modal-email-input');
+    const email = emailInput.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailInput.style.borderColor = 'var(--fail)';
+      emailInput.focus();
+      return;
+    }
+
+    const interests = {
+      newsletter: document.getElementById('interest-newsletter').checked,
+      blog: document.getElementById('interest-blog').checked,
+      taxInsights: document.getElementById('interest-taxinsights').checked,
+      webinars: document.getElementById('interest-webinars').checked,
+      services: document.getElementById('interest-services').checked,
+    };
+
+    showModalState('modal-loading');
+
+    // Sheet write first (lead capture is the priority and it works)
+    try {
+      await fetch(BACKEND_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          email: email,
+          address: state.propertyAddress || '',
+          interests: interests,
+          timestamp: new Date().toISOString(),
+          results: {
+            qualifies: lastResult?.qualifies ?? null,
+            bannerText: lastResult?.bannerText ?? null,
+            totalLossLow: lastResult?.totalLossLow ?? null,
+            totalLossHigh: lastResult?.totalLossHigh ?? null,
+            savingsLow: lastResult?.savingsLow ?? null,
+            savingsHigh: lastResult?.savingsHigh ?? null,
+          },
+          inputs: { ...state }
+        })
+      });
+      console.log('[Backend] Submitted to', BACKEND_URL, 'for', email);
+    } catch (e) {
+      console.error('[Backend] Sheet write failed:', e);
+    }
+
+    // PDF generation second — must actually succeed to show success
+    try {
+      await generateResultsPDF();
+      showModalState('modal-success');
+    } catch (pdfErr) {
+      console.error('[PDF] Generation failed:', pdfErr);
+      showModalState('modal-error');
+    }
+  }
+
+  async function generateResultsPDF() {
+    // Wait for fonts so text rasterizes correctly
+    if (document.fonts && document.fonts.ready) {
+      try { await document.fonts.ready; } catch (e) { /* continue */ }
+    }
+
+    const content = buildPdfContent();
+    const container = document.createElement('div');
+    container.innerHTML = content;
+    container.style.position = 'fixed';
+    container.style.left = '0';
+    container.style.top = '0';
+    container.style.width = '816px';
+    container.style.background = '#ffffff';
+    container.style.zIndex = '-99999';
+    container.style.opacity = '1';
+    container.style.pointerEvents = 'none';
+    document.body.appendChild(container);
+
+    // Let layout settle
+    await new Promise(r => setTimeout(r, 200));
+
+    console.log('[PDF] Container size:', container.offsetWidth, 'x', container.offsetHeight);
+
+    const pages = container.children;
+    console.log('[PDF] Page count:', pages.length);
+
+    const { jsPDF } = window.jspdf;
+    const pageW = 816;
+    const pageH = 1056; // US Letter @ 96dpi
+    const pdf = new jsPDF({ unit: 'px', format: [pageW, pageH], orientation: 'portrait' });
+
+    for (let p = 0; p < pages.length; p++) {
+      // Capture link positions before html2canvas rasterizes them
+      const pageEl = pages[p];
+      const pageRect = pageEl.getBoundingClientRect();
+      const linkEls = pageEl.querySelectorAll('a[href]');
+      const linkData = [];
+      linkEls.forEach(a => {
+        const r = a.getBoundingClientRect();
+        linkData.push({
+          url: a.href,
+          x: r.left - pageRect.left,
+          y: r.top - pageRect.top,
+          w: r.width,
+          h: r.height
+        });
+      });
+
+      let canvas;
+      try {
+        canvas = await html2canvas(pages[p], {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          width: 816,
+          windowWidth: 816,
+          scrollX: 0,
+          scrollY: 0,
+          logging: false
+        });
+      } catch (err) {
+        document.body.removeChild(container);
+        console.error('[PDF] html2canvas failed on page ' + (p + 1) + ':', err);
+        throw err;
+      }
+
+      console.log('[PDF] Page ' + (p + 1) + ' canvas:', canvas.width, 'x', canvas.height);
+
+      // BLANK-CHECK on page 1
+      if (p === 0) {
+        let nonWhite = 0;
+        try {
+          const ctx = canvas.getContext('2d');
+          const sample = ctx.getImageData(0, 0, canvas.width, Math.min(canvas.height, 400)).data;
+          for (let i = 0; i < sample.length; i += 4) {
+            if (!((sample[i] === 255 && sample[i+1] === 255 && sample[i+2] === 255) || sample[i+3] === 0)) {
+              nonWhite++;
+              if (nonWhite > 50) break;
+            }
+          }
+        } catch (e) {
+          console.warn('[PDF] Could not sample canvas pixels:', e);
+        }
+        console.log('[PDF] Non-white pixels in sample (expect >50 if content rendered):', nonWhite);
+      }
+
+      const imgW = pageW;
+      const naturalH = (canvas.height / canvas.width) * imgW;
+      const imgH = Math.min(pageH, naturalH);
+
+      if (p > 0) pdf.addPage([pageW, pageH], 'portrait');
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, imgW, imgH);
+
+      // Add clickable link annotations
+      const scale = imgH / naturalH;
+      linkData.forEach(link => {
+        pdf.link(link.x * scale, link.y * scale, link.w * scale, link.h * scale, { url: link.url });
+      });
+      console.log('[PDF] Page ' + (p + 1) + ' links:', linkData.length);
+    }
+
+    pdf.save('STR_Tax_Strategy_Results.pdf');
+    console.log('[PDF] Generation complete');
+
+    document.body.removeChild(container);
+  }
+
+  function buildStrategyBreakdown() {
+    if (!lastResult) return [];
+    return lastResult.strategies;
+  }
+
+  function buildPdfContent() {
+    const r = lastResult;
+    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const logoEl = document.querySelector('img[src^="data:image"]');
+    const logoSrc = logoEl ? logoEl.src : '';
+
+    // Banner colors (hardcoded — no CSS vars for html2canvas)
+    let bannerBg, bannerColor;
+    if (r.bannerClass === 'banner-pass') { bannerBg = '#e3f5e8'; bannerColor = '#2a7d44'; }
+    else if (r.bannerClass === 'banner-borderline') { bannerBg = '#fdf6e3'; bannerColor = '#c89a3a'; }
+    else { bannerBg = '#fbe8e8'; bannerColor = '#a04545'; }
+
+    // Savings / loss display
+    const savingsLine = r.qualifies
+      ? `$${formatNum(r.savingsLow)} &ndash; $${formatNum(r.savingsHigh)}`
+      : '$0 (current year)';
+    const lossLine = r.qualifies
+      ? `$${formatNum(r.totalLossLow)} &ndash; $${formatNum(r.totalLossHigh)}`
+      : '$0';
+
+    // Recovery calculations
+    const dp = r.downPayment;
+    const recMid = (r.savingsLow + r.savingsHigh) / 2;
+    const recPct = r.qualifies ? Math.round((recMid / dp) * 100) : 0;
+    const barWidth = Math.min(100, Math.max(8, r.qualifies ? (recMid / dp) * 100 : 0));
+    const recoveryText = r.qualifies
+      ? `You recover <strong style="color:#0088cc; font-size:16px; font-weight:700;">${recPct}%</strong> of your down payment in year one federal tax savings.`
+      : `Year one savings apply only once you qualify. <strong style="color:#0088cc; font-size:16px; font-weight:700;">${Math.round(r.qualGapPct || 0)}%</strong> of your down payment is on the table once qualified.`;
+
+    // Strategy badge inline styles
+    function badgeStyle(status) {
+      if (status === 'applies') return 'background:#e3f5e8; color:#2a7d44;';
+      if (status === 'warn') return 'background:#fdf6e3; color:#c89a3a;';
+      return 'background:#f0f3f7; color:#8a93a0;';
+    }
+    const strategies = buildStrategyBreakdown();
+    const strategyHtml = strategies.map((s, i) => `
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; padding:10px 0; ${i < strategies.length - 1 ? 'border-bottom:1px solid #e5e7eb;' : ''} gap:12px;">
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:600; color:#1a1a1a; margin-bottom:2px;">${s.label}</div>
+          <div style="font-size:11.5px; color:#5a6573; line-height:1.4;">${s.note}</div>
+        </div>
+        <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; padding:3px 8px; border-radius:3px; flex-shrink:0; white-space:nowrap; ${badgeStyle(s.status)}">${s.statusLabel}</div>
+      </div>
+    `).join('');
+
+    // Inputs table rows (page 3)
+    function fmtField(key) {
+      const val = state[key];
+      if (val == null) return null;
+      const m = labelMap[key];
+      if (!m) return null;
+      const label = m.label;
+      let display;
+      if (m.map) display = m.map[val] || val;
+      else if (m.format) display = m.format(val);
+      else display = String(val);
+      return { label, display };
+    }
+    const fields = [
+      'filingStatus', 'income', 'propertyStatus', 'purchasePrice', 'downPaymentPct',
+      'placedInServiceDate', 'landAllocation', 'avgStay', 'yourHours', 'othersMaxHours',
+      'personalUseDays', 'operatingLoss', 'furnishingCosts', 'costSegStatus'
+    ];
+    const rows = fields.map(fmtField).filter(Boolean);
+    if (state.propertyAddress) {
+      rows.unshift({ label: 'Property address', display: state.propertyAddress });
+    }
+    const inputRowsHtml = rows.map(row => `
+      <tr>
+        <td style="padding:14px 0; border-bottom:1px solid #e5e7eb; color:#5a6573; font-size:14px;">${row.label}</td>
+        <td style="padding:14px 0; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:600; color:#1a1a1a; font-size:14px;">${row.display}</td>
+      </tr>
+    `).join('');
+
+    // Social icon SVG paths (lifted verbatim from checklist.html)
+    const fbPath = 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z';
+    const liPath = 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z';
+    const igPath = 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z';
+    const iconFill = 'rgba(255,255,255,0.45)';
+
+    return `
+      <!-- PAGE 1: COVER -->
+      <div style="width:816px; min-height:1056px; background:#061a2e; position:relative; overflow:hidden; display:flex; flex-direction:column; padding:48px 56px 36px; box-sizing:border-box; color:#ffffff;">
+        <div style="position:absolute; top:-15%; left:-10%; width:55%; height:55%; background:radial-gradient(circle at center, rgba(0,136,204,0.18) 0%, transparent 60%); pointer-events:none;"></div>
+        <div style="position:absolute; bottom:-20%; right:-5%; width:45%; height:45%; background:radial-gradient(circle at center, rgba(0,136,204,0.10) 0%, transparent 60%); pointer-events:none;"></div>
+        <div style="position:relative; z-index:1;">
+          <img src="${logoSrc}" style="width:110px; display:block;">
+        </div>
+        <div style="position:relative; z-index:1; flex:1; display:flex; flex-direction:column; justify-content:center; max-width:580px;">
+          <div style="font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; font-size:10px; font-weight:600; color:#0088cc; text-transform:uppercase; letter-spacing:0.2em; margin-bottom:18px;">STR TAX STRATEGY &middot; PERSONALIZED RESULTS</div>
+          <div style="font-family:'Fraunces',Georgia,serif; font-size:46px; font-weight:500; color:#ffffff; line-height:1.1; letter-spacing:-0.02em; margin:0 0 20px 0;">Personalized <span style="font-style:italic; color:#0088cc; font-weight:400; white-space:nowrap;">STR Tax Strategy</span><br>Results</div>
+          <p style="font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; font-size:17px; color:rgba(255,255,255,0.80); line-height:1.5; margin:0 0 16px 0; max-width:520px;">Based on the property and details you entered, here&rsquo;s what your year-one federal tax position could look like.</p>
+          <p style="font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif; font-size:14px; color:rgba(255,255,255,0.65); line-height:1.6; margin:0 0 32px 0; max-width:520px;">These are directional estimates based on your inputs and typical cost segregation allocations. Your CPA will refine these numbers against your specific facts and tax position before filing.</p>
+          <div style="border-top:1px solid rgba(255,255,255,0.12); padding-top:16px; display:flex;">
+            <div style="padding-right:40px; margin-right:40px; border-right:1px solid rgba(255,255,255,0.10);">
+              <div style="font-family:'Inter',sans-serif; font-size:9.5px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(255,255,255,0.55); font-weight:600; margin-bottom:4px;">PROPERTY</div>
+              <div style="font-family:'Fraunces',Georgia,serif; font-size:18px; font-weight:500; color:#ffffff; line-height:1.1;">${state.propertyAddress || 'Not provided'}</div>
+            </div>
+            <div>
+              <div style="font-family:'Inter',sans-serif; font-size:9.5px; text-transform:uppercase; letter-spacing:0.18em; color:rgba(255,255,255,0.55); font-weight:600; margin-bottom:4px;">GENERATED</div>
+              <div style="font-family:'Fraunces',Georgia,serif; font-size:18px; font-weight:500; color:#ffffff; line-height:1.1;">${dateStr}</div>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative; z-index:1; display:flex; justify-content:center; gap:20px; padding-top:20px;">
+          <a href="https://www.facebook.com/aiolacpa" target="_blank" rel="noopener" style="color:${iconFill}; text-decoration:none; display:flex; align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${iconFill}"><path d="${fbPath}"/></svg></a>
+          <a href="https://www.linkedin.com/company/aiola-cpa-pllc/" target="_blank" rel="noopener" style="color:${iconFill}; text-decoration:none; display:flex; align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${iconFill}"><path d="${liPath}"/></svg></a>
+          <a href="https://www.instagram.com/aiolacpa/" target="_blank" rel="noopener" style="color:${iconFill}; text-decoration:none; display:flex; align-items:center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="${iconFill}"><path d="${igPath}"/></svg></a>
+        </div>
+      </div>
+
+      <!-- PAGE 2: RESULTS -->
+      <div style="width:816px; min-height:1056px; background:#ffffff; padding:48px 64px; box-sizing:border-box; color:#1a1a1a; font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;">
+        <div style="background:${bannerBg}; color:${bannerColor}; padding:18px 0; text-align:center; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.9px; border-radius:8px;">${r.bannerText}</div>
+
+        <div style="background:#f0f8fc; border-radius:8px; padding:28px; margin-top:20px; text-align:center;">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#5a6573; margin-bottom:8px; font-weight:600;">ESTIMATED YEAR ONE FEDERAL TAX SAVINGS</div>
+          <div style="font-family:'Fraunces',Georgia,serif; font-size:36px; font-weight:700; color:#0a2540;">${savingsLine}</div>
+          <div style="font-size:12px; color:#5a6573; margin-top:8px;">${r.headlineSub}</div>
+        </div>
+
+        <div style="background:#f0f8fc; border-radius:8px; padding:28px; margin-top:12px; text-align:center;">
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#5a6573; margin-bottom:8px; font-weight:600;">PROJECTED YEAR ONE TAX LOSS</div>
+          <div style="font-family:'Fraunces',Georgia,serif; font-size:36px; font-weight:700; color:#0a2540;">${lossLine}</div>
+        </div>
+
+        <div style="margin-top:32px;">
+          <div style="font-size:10.5px; font-weight:600; color:#0088cc; text-transform:uppercase; letter-spacing:0.22em; margin-bottom:6px;">DOWN PAYMENT RECOVERY</div>
+          <div style="font-family:'Fraunces',Georgia,serif; font-size:17px; font-weight:500; color:#1a1a1a; letter-spacing:-0.01em; margin-bottom:14px;">How much of your down payment comes back in year one</div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+            <div style="font-size:11.5px; color:#5a6573; width:105px; flex-shrink:0; font-weight:500;">Down payment</div>
+            <div style="flex:1; height:24px; background:#f0f3f7; border-radius:4px; position:relative; overflow:hidden;">
+              <div style="height:100%; width:100%; background:#6a7484; border-radius:4px;"></div>
+              <span style="position:absolute; top:50%; left:10px; transform:translateY(-50%); color:#ffffff; font-weight:600; font-size:12px;">$${formatNum(dp)}</span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div style="font-size:11.5px; color:#5a6573; width:105px; flex-shrink:0; font-weight:500;">Tax savings</div>
+            <div style="flex:1; height:24px; background:#f0f3f7; border-radius:4px; position:relative; overflow:hidden;">
+              <div style="height:100%; width:${barWidth}%; background:linear-gradient(90deg, #2a7d44, #4eaa6a); border-radius:4px;"></div>
+              <span style="position:absolute; top:50%; left:10px; transform:translateY(-50%); color:#ffffff; font-weight:600; font-size:12px;">$${formatNum(Math.round(r.qualifies ? recMid : 0))}</span>
+            </div>
+          </div>
+          <div style="padding:11px 14px; background:#f0f8fc; border-radius:5px; text-align:center; font-size:13px; color:#1a1a1a;">${recoveryText}</div>
+        </div>
+
+        <div style="margin-top:36px;">
+          <div style="font-size:10.5px; font-weight:600; color:#0088cc; text-transform:uppercase; letter-spacing:0.22em; margin-bottom:14px;">STRATEGY BREAKDOWN</div>
+          ${strategyHtml}
+        </div>
+
+        <div style="margin-top:32px; padding:14px 18px; background:#f0f8fc; border-left:3px solid #0088cc; border-radius:4px;">
+          <div style="font-size:10.5px; font-weight:600; color:#0088cc; text-transform:uppercase; letter-spacing:0.22em; margin-bottom:6px;">FEDERAL ESTIMATE ONLY</div>
+          <div style="font-size:12.5px; color:#5a5a5a; line-height:1.5;">State treatment varies considerably. Many states do not conform to federal bonus depreciation, which can reduce or eliminate the state-level portion of these savings. We confirm state treatment before your return is filed.</div>
+        </div>
+      </div>
+
+      <!-- PAGE 3: INPUTS + CTA -->
+      <div style="width:816px; min-height:1056px; background:#ffffff; padding:48px 64px; box-sizing:border-box; color:#1a1a1a; font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;">
+        <div style="font-size:13px; text-transform:uppercase; letter-spacing:1px; color:#5a6573; margin-bottom:24px; font-weight:600;">YOUR INPUTS</div>
+        <table style="width:100%; border-collapse:collapse;">
+          ${inputRowsHtml}
+        </table>
+
+        <div style="margin-top:40px; padding:24px; background:#f0f8fc; border-radius:8px; text-align:center;">
+          <div style="font-weight:600; color:#0a2540; font-size:16px; margin-bottom:8px;">Ready to deploy this strategy on your actual return?</div>
+          <a href="https://www.aiolacpa.com/contact-str-calculator/?utm_source=str_calculator&utm_medium=tool&utm_campaign=str_lead_capture" target="_blank" rel="noopener" style="color:#0088cc; text-decoration:none; font-weight:600; font-size:14px;">Book a meeting with one of our CPAs &rarr;</a>
+        </div>
+
+        <div style="margin-top:30px; font-size:10px; color:#8a93a0; line-height:1.5;">
+          This calculator is for educational purposes only and not tax advice. Numbers are directional estimates based on the inputs you provide and typical cost segregation allocations. Final numbers depend on your specific facts, the actual cost seg study, state conformity rules in your jurisdiction, prior-year carryforwards, and your full federal return context. Aiola CPA, PLLC does not guarantee any outcome based on these estimates.
+        </div>
+      </div>
+    `;
+  }
+
+  function resetCalculator() {
+    closeEmailModal();
+    // Reset all state fields
+    state.filingStatus = null;
+    state.income = null;
+    state.propertyAddress = '';
+    state.propertyStatus = null;
+    state.contractSignedDate = null;
+    state.closingDate = null;
+    state.purchasePrice = null;
+    state.downPaymentPct = null;
+    state.placedInServiceDate = null;
+    state.landAllocation = null;
+    state.avgStay = null;
+    state.avgStaySubstantialServices = null;
+    state.yourHours = null;
+    state.othersMaxHours = null;
+    state.personalUseDays = null;
+    state.operatingLoss = null;
+    state.furnishingCosts = null;
+    state.costSegStatus = null;
+
+    // Clear selected options
+    document.querySelectorAll('.options .option.selected').forEach(el => el.classList.remove('selected'));
+
+    // Clear text/date inputs
+    ['income-input', 'property-address-input', 'purchase-price-input', 'down-payment-input', 'land-allocation-input', 'operating-loss-input', 'furnishing-input', 'contract-signed-date', 'closing-date', 'placed-in-service-input'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+
+    // Hide conditional sub-questions
+    document.getElementById('property-dates').style.display = 'none';
+    document.getElementById('substantial-services-sub').style.display = 'none';
+    document.getElementById('cost-seg-filed-note').style.display = 'none';
+    document.getElementById('results-amend-note').style.display = 'none';
+    document.getElementById('dp-dollar-hint').textContent = '';
+
+    // Return to welcome
+    showStep(0);
+  }
+
+  // Init
+  showStep(0);
+</script>
+
+</body>
+</html>
